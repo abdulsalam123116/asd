@@ -89,7 +89,7 @@ class COASeeder extends Seeder
             ],
             [
                 'account_code' => '010',
-                'account_name' => 'SGST',
+                'account_name' => 'VAT',
                 'account_nature' => 'Liability',
                 'account_type' => 'Non-Current',
                 'expense_type' => 'None',
