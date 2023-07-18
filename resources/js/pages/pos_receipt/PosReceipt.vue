@@ -146,7 +146,10 @@
                     <th style="width: 18rem">Item</th>
                     <th>Unit</th>
                     <th v-if="item.type == 'TRN'">Gift Unit</th>
+
+                    <th style="width: 5rem">Cost ({{currency}})</th>
                     <th style="width: 5rem">Price ({{currency}})</th>
+
                     <th>Expiry</th>
                     <th>Disc (%)</th>
                     <th>Subtotal ({{currency}})</th>
@@ -216,6 +219,9 @@
                             @click="adjustFreeQty('minus', savedItem)"
                           />
                         </div>
+                      </td>
+                      <td class="p-pt-2">
+                        {{currency}} {{ fixDigits(savedItem.purchasePrice) }}
                       </td>
                       <td class="p-pt-2">
                         {{currency}} {{ fixDigits(savedItem.sellingPrice) }}
@@ -499,7 +505,7 @@
           label="NEXT"
           @click="openPaymentMethod(!v$.$invalid)"
           :disabled="item.profileID == 0 || netTotal <= 0"
-        /> 
+        />
         <Button
           v-else
           class="p-col p-button-warning b-style"
@@ -794,7 +800,7 @@ export default class PosReceipt extends Vue {
 
     let sellRate = 0;
     let disc = 0;
-    
+
 
     if (this.item.type != "TRN") {
       sellRate = itemInfo.sale_price;
@@ -960,7 +966,7 @@ export default class PosReceipt extends Vue {
 
     return total;
   }
-  
+
   get totalCostInventory() {
     let total = 0;
     this.savedItemList.forEach((e) => {
@@ -1093,7 +1099,7 @@ export default class PosReceipt extends Vue {
   }
 
   adjustQty(type, item) {
-    
+
     if (type == "minus" && item.unit > 0) {
       item.unit--;
     } else if (type == "add") {
@@ -1373,7 +1379,7 @@ export default class PosReceipt extends Vue {
   }
 
   setAccountingEntries() {
-   
+
     this.counterEntry = [];
 
     if (this.item.type == "INE") {
@@ -1387,7 +1393,7 @@ export default class PosReceipt extends Vue {
             type: "Debit",
           });
         }
-        
+
         if (this.totalPaidBank > 0) {
           this.counterEntry.push({
             accountID: 8,
@@ -1413,7 +1419,7 @@ export default class PosReceipt extends Vue {
               type: "Debit",
             });
           }
-          
+
           if (this.totalPaidBank > 0) {
             this.counterEntry.push({
               accountID: 8,
@@ -1437,8 +1443,8 @@ export default class PosReceipt extends Vue {
           amount: this.totalCostInventory,
           type: "Debit",
         });
-        
-        
+
+
         this.counterEntry.push({
           accountID: 48,
           accountHead: 'Sales Revenue',
@@ -1534,7 +1540,7 @@ export default class PosReceipt extends Vue {
             type: "Credit",
           });
         }
-        
+
         if (this.totalPaidBank > 0) {
           this.counterEntry.push({
             accountID: 8,
@@ -1560,7 +1566,7 @@ export default class PosReceipt extends Vue {
               type: "Credit",
             });
           }
-          
+
           if (this.totalPaidBank > 0) {
             this.counterEntry.push({
               accountID: 8,
