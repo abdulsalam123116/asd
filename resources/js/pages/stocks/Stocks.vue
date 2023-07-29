@@ -183,7 +183,7 @@
                             <!-- New button for printing barcode -->
                             <Button
                                 icon="pi pi-print"
-                                label="Print Barcode T"
+                                label="Print Barcode"
                                 class="p-button-rounded p-button-info"
                                 @click="printBarcode(slotProps.data)"
                             />
@@ -1066,7 +1066,7 @@ export default class Stocks extends Vue {
 
         // Get the canvas element using the ref
         const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
-        const barcodeValue = data.barcode;
+        const barcodeValue = data.barcode + data.expiry_date.replace(/-/g, ""); // Append expiry_date to the barcode
 
         // Set the font and style for the text
         const ctx = canvasElement.getContext("2d");
