@@ -183,7 +183,7 @@
                             <!-- New button for printing barcode -->
                             <Button
                                 icon="pi pi-print"
-                                label="Print Barcode B"
+                                label="Print Barcode"
                                 class="p-button-rounded p-button-info"
                                 @click="printBarcode(slotProps.data)"
                             />
