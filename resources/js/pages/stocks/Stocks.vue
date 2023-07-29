@@ -183,7 +183,7 @@
                             <!-- New button for printing barcode -->
                             <Button
                                 icon="pi pi-print"
-                                label="Print Barcode"
+                                label="Print Barcode B"
                                 class="p-button-rounded p-button-info"
                                 @click="printBarcode(slotProps.data)"
                             />
@@ -1081,7 +1081,6 @@ export default class Stocks extends Vue {
             data.generic,
             "Price: " + data.sale_price + " AED",
         ];
-        console.log(words);
 
         const canvasCenterX = canvasElement.width / 2;
         const canvasCenterY = canvasElement.height / 2;
