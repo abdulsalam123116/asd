@@ -739,6 +739,7 @@
             customerName: this.state.selectedProfile,
             closeConfirmation: true,
             itemList: this.savedItemList,
+            netTotal: this.netTotal
         }"
         v-on:closePaymentScreenEvent="closePaymentScreen"
         v-on:getProceededPaymentsEvent="getProceededPayments"

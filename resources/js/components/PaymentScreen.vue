@@ -471,6 +471,7 @@ interface PaymentListType {
             this.amountLeft = Number(this.totalBill);
             this.itemSource = obj.itemSource;
             this.itemList = obj.itemList;
+            this.netTotal = obj.netTotal
             this.restriction = obj.restriction;
             this.customerID = obj.customerID;
             this.customerName = obj.customerName;
@@ -513,6 +514,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         needlePoints: 0,
     };
     private itemList = [];
+    private netTotal = 0;
 
     private paymentList: PaymentListType[] = [];
 
@@ -726,6 +728,9 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         //REDUCING THE AMOUNT PAID
         this.paymentList.forEach((e) => {
             if (e.paymentType != "Tip") {
+                console.log("e.transTotalAmount", e.transTotalAmount);
+                console.log("amountPaidTemp", amountPaidTemp);
+
                 amountPaidTemp = amountPaidTemp + e.transTotalAmount;
             }
         });
@@ -860,7 +865,6 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                             <p>Employee: </p>
                         </div>
 
-                        this.itemList
                         <!-- Item Table -->
                         <table class="item-table">
                             <thead>
@@ -878,8 +882,12 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                                 <tr>
                                     <td>${item.productName}</td>
                                     <td>${item.unit}</td>
-                                    <td>${item.purchasePrice} ${this.currency}</td>
-                                    <td>${item.unit * item.purchasePrice} ${this.currency}</td>
+                                    <td>${item.sellingPrice} ${
+                                            this.currency
+                                        }</td>
+                                    <td>${item.subTotal } ${
+                                            this.currency
+                                        }</td>
                                 </tr>
                                 `
                                     )
@@ -888,39 +896,11 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                             </tbody>
                         </table>
 
-
                         <div class="total">
-                            <!-- Payment Table -->
-                                        <table id="customer_payment_method_manual" class="table table-bordered table-striped py-list-collections table-hover">
-                                            ${this.paymentList
-                                                .map(
-                                                    (item) => `
-                                            <tr v-for="(item, index) in paymentList" :key="item">
-                                                <td class="text-left">${
-                                                    item.paymentType
-                                                }</td>
-                                                <td class="text-left">${
-                                                    this.currency
-                                                } <span id="history_total_cash">${this.fixLength(
-                                                        item.transTotalAmount
-                                                    )}</span></td>
-                                            </tr>
-                                            `
-                                                )
-                                                .join("")}
-                                            <tr>
-                                                <td style="background-color: green; color: #fff">Total</td>
-                                                <td class="text-left" style="background-color: green; color: #fff">${
-                                                    this.currency
-                                                } <b>${this.fixLength(
-            this.totalPaymentsReceived
-        )}</b></td>
-                                            </tr>
-                                            <p>Amount Paid: ${this.fixLength(
-                                                this.paymentRounding
-                                            )}</p>
-                                            <p>Balance Due: $0</p>
-                                        </table>
+                            <h4>Net Total: ${this.fixLength(this.netTotal)} </h4>
+                            ${this.paymentList.map((item) => `  <p>${item.paymentType} : ${item.transTotalAmount +  ' ' + this.currency }</p>`).join("")}
+                            <h3>Total: ${this.fixLength(this.totalPaymentsReceived)} ${ this.currency}</h3>
+                            <p>Balance Due: ${this.fixLength(this.paymentRounding )} ${ this.currency}</p>
                         </div>
 
                         <div class="footer">
@@ -952,7 +932,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         this.printReceipt();
 
         // Then, proceed with the rest of the payment confirmation process
-        //this.confirmPayments();
+        this.confirmPayments();
     }
 
     emitPayments() {
