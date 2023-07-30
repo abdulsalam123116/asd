@@ -718,7 +718,6 @@ import moment from "moment";
 import { useStore, ActionTypes } from "../../store";
 import JsBarcode from "jsbarcode";
 
-
 @Options({
     title: "Stocks",
     components: {},
@@ -1104,20 +1103,21 @@ export default class Stocks extends Vue {
         });
 
         // Create a new window for printing
-        const printWindow = window.open("", "_blank", "width=400,height=200");
 
         // Create an HTML string with the words and the barcode image
         const htmlContent = `
-      <div style="text-align: center;">
-        <div style="font-size: 14px;">${words[0]}</div>
-        <div style="font-size: 14px;">${words[1]}</div>
-        <img src="${canvasElement.toDataURL()}" />
-        <div style="font-size: 14px;">${words[2]}</div>
-      </div>
-    `;
+            <div style="text-align: center;">
+                <div style="font-size: 14px;">${words[0]}</div>
+                <div style="font-size: 14px;">${words[1]}</div>
+                <img src="${canvasElement.toDataURL()}" />
+                <div style="font-size: 14px;">${words[2]}</div>
+            </div>
+            `;
 
-        // Set the content of the new window to the HTML string
+        const printWindow = window.open("", "_blank", "width=400,height=200");
+        printWindow.document.open();
         printWindow.document.write(htmlContent);
+        printWindow.document.close();
 
         // Print the window
         printWindow.print();
