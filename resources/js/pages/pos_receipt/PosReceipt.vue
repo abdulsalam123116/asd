@@ -738,6 +738,7 @@
             customerID: this.item.profileID,
             customerName: this.state.selectedProfile,
             closeConfirmation: true,
+            itemList: this.savedItemList,
         }"
         v-on:closePaymentScreenEvent="closePaymentScreen"
         v-on:getProceededPaymentsEvent="getProceededPayments"
