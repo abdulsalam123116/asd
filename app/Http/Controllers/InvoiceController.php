@@ -1,63 +1,62 @@
 <?php
+// app/Http/Controllers/InvoiceController.php
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\WebSocket\InvoiceWebSocket;
+use Ratchet\MessageComponentInterface;
+use Ratchet\ConnectionInterface;
+use Ratchet\Server\IoServer;
+use Ratchet\Http\HttpServer;
+use Ratchet\WebSocket\WsServer;
 
-class InvoiceController extends Controller
+class InvoiceController extends Controller implements MessageComponentInterface
 {
+    protected $clients;
+
+    public function __construct()
+    {
+        $this->clients = new \SplObjectStorage;
+    }
+
+    public function onOpen(ConnectionInterface $conn)
+    {
+        // لا يلزم فعل أي شيء عند فتح اتصال جديد
+        // يمكنك إضافة أي تعليمات تريدها هنا
+
+        $this->clients->attach($conn);
+    }
+
+    public function onMessage(ConnectionInterface $from, $msg)
+    {
+        // لا يلزم فعل أي شيء هنا، لأننا لا نتوقع استقبال بيانات من التطبيق C# إلى Laravel
+    }
+
+    public function onClose(ConnectionInterface $conn)
+    {
+        // لا يلزم فعل أي شيء عند إغلاق اتصال
+        // يمكنك إضافة أي تعليمات تريدها هنا
+
+        $this->clients->detach($conn);
+    }
+
+    public function onError(ConnectionInterface $conn, \Exception $e)
+    {
+        $conn->close();
+    }
+
+    // دالة لإرسال الفاتورة عبر الـ Socket إلى التطبيق المكتوب بلغة C#
     public function sendInvoiceToCSharpApp(Request $request)
     {
-        // ... (your existing code to build $invoiceData)
-        // Sample data for the invoice
-        $pharmacyName = "صيدلية الرحمة";
-        $pharmacyAddress = "شارع العباسية، القاهرة";
-        $pharmacyPhoneNumber = "01012345678";
-        $invoiceNumber = "INV-12345";
-        $invoiceDate = now();
+        // تفاصيل الفاتورة والمنتجات وغيرها من البيانات التي تحتاج إلى إرسالها إلى C#
+        // قم بتعبئة هذه المتغيرات باحتياجاتك الخاصة
 
-        $customerName = "السيد أحمد علي";
-        $customerAddress = "شارع المعز، القاهرة";
-        $customerPhoneNumber = "01087654321";
+        $invoiceData = "بيانات الفاتورة هنا..."; // قم ببناء بيانات الفاتورة بشكل نصي هنا
+        $socketMessage = json_encode(['invoiceData' => $invoiceData]);
 
-        $productNames = ["باراسيتامول", "أموكسيسيلين", "إيبوبروفين"];
-        $quantities = [2, 1, 3];
-        $prices = [10.5, 20.0, 15.75];
-
-        $invoiceDataBuilder = new \StringBuilder();
-        $invoiceDataBuilder->appendLine("صيدلية: $pharmacyName");
-        $invoiceDataBuilder->appendLine("العنوان: $pharmacyAddress");
-        $invoiceDataBuilder->appendLine("هاتف: $pharmacyPhoneNumber");
-        $invoiceDataBuilder->appendLine();
-        $invoiceDataBuilder->appendLine("رقم الفاتورة: $invoiceNumber");
-        $invoiceDataBuilder->appendLine("تاريخ الفاتورة: " . $invoiceDate->format("d/m/Y"));
-        $invoiceDataBuilder->appendLine();
-        $invoiceDataBuilder->appendLine("العميل: $customerName");
-        $invoiceDataBuilder->appendLine("العنوان: $customerAddress");
-        $invoiceDataBuilder->appendLine("هاتف: $customerPhoneNumber");
-        $invoiceDataBuilder->appendLine();
-        $invoiceDataBuilder->appendLine("تفاصيل المنتجات:");
-
-        for ($i = 0; $i < count($productNames); $i++) {
-            $invoiceDataBuilder->append("$productNames[$i] - الكمية: $quantities[$i] - السعر: $prices[$i] جنيه");
-            $invoiceDataBuilder->appendLine();
+        foreach ($this->clients as $client) {
+            $client->send($socketMessage);
         }
-
-        $invoiceDataBuilder->appendLine();
-
-        $totalAmount = array_sum(array_map(function ($quantity, $price) {
-            return $quantity * $price;
-        }, $quantities, $prices));
-
-        $invoiceDataBuilder->append("إجمالي الفاتورة: " . number_format($totalAmount, 2) . " جنيه");
-
-        $invoiceData = $invoiceDataBuilder->toString();
-
-
-        // Send the invoice data to the C# application through WebSocket
-        $webSocketServer = new InvoiceWebSocket();
-        $webSocketServer->sendInvoiceData($invoiceData);
 
         return response()->json(['message' => 'تم إرسال الفاتورة بنجاح.']);
     }
