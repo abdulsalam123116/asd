@@ -773,13 +773,13 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         // Get the current date and time
         const currentDate = new Date();
         const options = {
-            onth: "long",
+            month: "long",
             day: "numeric",
             year: "numeric",
             hour: "numeric",
             minute: "numeric",
             second: "numeric",
-            hour12: false, // To display time in 24-hour format
+            hour12: true, // To display time in 24-hour format
         };
         const formattedDate = currentDate.toLocaleDateString(
             undefined,
