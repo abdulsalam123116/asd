@@ -329,7 +329,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-4">
+                        <!-- <div class="col-4">
                             <Button
                                 label="Done"
                                 icon="pi pi-check-circle"
@@ -344,8 +344,8 @@
                                         totalPaymentsReceived > 0)
                                 "
                             />
-                        </div>
-                        <div class="col-8">
+                        </div> -->
+                        <div class="col">
                             <Button
                                 label="Print Receipt & Confirm"
                                 icon="pi pi-print"
@@ -849,7 +849,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                 </head>
                 <body>
                     <div id="invoice">
-                        <img src="https://alhayatpharmacy.ae/wp-content/uploads/305217401_752369116207039_851646279445606560_n-1.png" alt="Pharmacy Logo" id="logo">
+                        <img src="https://alhayatpharmacy.ae/wp-content/uploads/305217401_752369116207039_851646279445606560_n-1-1.png" alt="Pharmacy Logo" id="logo">
 
                         <div class="header">
                             <h2>Tax Invoice</h2>
@@ -860,7 +860,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
                         <div class="customer-details">
                             <p>Date: ${formattedDate}</p>
-                            <p>Invoice No.: 12345</p>
+                            <p>Invoice No.: </p>
                             <p>Customer: ${this.customerName}</p>
                             <p>Employee: </p>
                         </div>
@@ -905,6 +905,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
                         <div class="footer">
                             <p>Thank you for your visit, have a nice day!</p>
+                            <br />
                                 <p>By: Smart Link</p>
                                         </div>
 
@@ -915,7 +916,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                     `;
 
         // Create a new hidden window and write the receipt content into it
-        const printWindow = window.open("", "_blank", "width=800,height=5000");
+        const printWindow = window.open("", "_blank", "width=800,height=auto");
         printWindow.document.open();
         printWindow.document.write(receiptContent);
         printWindow.document.close();
