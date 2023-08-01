@@ -471,7 +471,7 @@ interface PaymentListType {
             this.amountLeft = Number(this.totalBill);
             this.itemSource = obj.itemSource;
             this.itemList = obj.itemList;
-            this.netTotal = obj.netTotal
+            this.netTotal = obj.netTotal;
             this.restriction = obj.restriction;
             this.customerID = obj.customerID;
             this.customerName = obj.customerName;
@@ -772,7 +772,15 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     printReceipt() {
         // Get the current date and time
         const currentDate = new Date();
-        const options = { month: "long", day: "numeric", year: "numeric" };
+        const options = {
+            onth: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false, // To display time in 24-hour format
+        };
         const formattedDate = currentDate.toLocaleDateString(
             undefined,
             options
@@ -882,12 +890,8 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                                 <tr>
                                     <td>${item.productName}</td>
                                     <td>${item.unit}</td>
-                                    <td>${item.sellingPrice} ${
-                                            this.currency
-                                        }</td>
-                                    <td>${item.subTotal } ${
-                                            this.currency
-                                        }</td>
+                                    <td>${item.sellingPrice} ${this.currency}</td>
+                                    <td>${item.subTotal} ${this.currency}</td>
                                 </tr>
                                 `
                                     )
@@ -897,10 +901,25 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                         </table>
 
                         <div class="total">
-                            <h4>Net Total: ${this.fixLength(this.netTotal)} </h4>
-                            ${this.paymentList.map((item) => `  <p>${item.paymentType} : ${item.transTotalAmount +  ' ' + this.currency }</p>`).join("")}
-                            <h3>Total: ${this.fixLength(this.totalPaymentsReceived)} ${ this.currency}</h3>
-                            <p>Balance Due: ${this.fixLength(this.paymentRounding )} ${ this.currency}</p>
+                            <h4>Net Total: ${this.fixLength(
+                                this.netTotal
+                            )} </h4>
+                            ${this.paymentList
+                                .map(
+                                    (item) =>
+                                        `  <p>${item.paymentType} : ${
+                                            item.transTotalAmount +
+                                            " " +
+                                            this.currency
+                                        }</p>`
+                                )
+                                .join("")}
+                            <h3>Total: ${this.fixLength(
+                                this.totalPaymentsReceived
+                            )} ${this.currency}</h3>
+                            <p>Balance Due: ${this.fixLength(
+                                this.paymentRounding
+                            )} ${this.currency}</p>
                         </div>
 
                         <div class="footer">
