@@ -1331,6 +1331,7 @@ export default class PosReceipt extends Vue {
 
         const method = this.getPaymentMethod(paymentList);
         this.item.paymentMethod = method;
+        console.log('Method....: ', method);
 
         this.item.discount = this.totalDiscAmount;
         this.item.totalGrossAmt = this.totalGross;
@@ -1354,6 +1355,8 @@ export default class PosReceipt extends Vue {
                 this.counterEntry
             )
             .then((res) => {
+                console.log('Response Save Item: ', res);
+
                 if (res.alert == "info") {
                     this.clearAll();
                 }

@@ -786,10 +786,16 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
             options
         );
 
-        const userData =  JSON.parse(localStorage.getItem("userData"));
-        var employee =  userData ? userData['fullName'] : "";
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        var employee = userData ? userData["fullName"] : "";
 
         console.log("paymentList", this.paymentList);
+
+        const randomDecimal = Math.random();
+        // Multiply the random decimal by 1000000 to get a number between 0 and 999999.999...
+        const randomNumber = randomDecimal * 1000000;
+        // Use Math.floor() to remove the decimal part and get a 6-digit number
+        const invoiceNumber = Math.floor(randomNumber);
 
         // Define the content of the receipt that needs to be printed
         const receiptContent = `<!DOCTYPE html>
@@ -871,7 +877,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
                         <div class="customer-details">
                             <p>Date: ${formattedDate}</p>
-                            <p>Invoice No.: </p>
+                            <p>Invoice No.: ${invoiceNumber} </p>
                             <p>Customer: ${this.customerName}</p>
                             <p>Employee: ${employee}</p>
                         </div>
