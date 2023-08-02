@@ -786,6 +786,9 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
             options
         );
 
+        const userData =  JSON.parse(localStorage.getItem("userData"));
+        var employee =  userData ? userData['fullName'] : "";
+
         console.log("paymentList", this.paymentList);
 
         // Define the content of the receipt that needs to be printed
@@ -870,7 +873,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                             <p>Date: ${formattedDate}</p>
                             <p>Invoice No.: </p>
                             <p>Customer: ${this.customerName}</p>
-                            <p>Employee: </p>
+                            <p>Employee: ${employee}</p>
                         </div>
 
                         <!-- Item Table -->
