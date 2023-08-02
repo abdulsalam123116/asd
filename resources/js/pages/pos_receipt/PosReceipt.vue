@@ -1323,6 +1323,8 @@ export default class PosReceipt extends Vue {
     }
 
     getProceededPayments(paymentList) {
+        console.log('getProceededPayments called from PosReceipt.vue');
+
         this.paymentList = paymentList;
         const tenderedList = this.getTotalPaid(paymentList);
         this.item.totalPaid = Number(tenderedList[0]);
