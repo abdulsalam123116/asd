@@ -1108,7 +1108,7 @@ export default class Stocks extends Vue {
         const htmlContent = `
             <div style="text-align: center;">
                 <div style="font-size: 14px;">${words[0]}</div>
-                <div style="font-size: 14px;">${words[1]}</div>
+                <div style="font-size: 14px;">Alhayat Pharmacy</div>
                 <img src="${canvasElement.toDataURL()}" />
                 <div style="font-size: 14px;">${words[2]}</div>
             </div>
