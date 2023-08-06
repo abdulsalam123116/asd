@@ -1114,7 +1114,7 @@ export default class Stocks extends Vue {
             </div>
             `;
 
-        const printWindow = window.open("", "_blank", "width=400,height=200");
+        const printWindow = window.open("", "_blank", "width=500,height=250");
         printWindow.document.open();
         printWindow.document.write(htmlContent);
         printWindow.document.close();

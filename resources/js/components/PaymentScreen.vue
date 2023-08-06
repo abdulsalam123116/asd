@@ -329,7 +329,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-4">
+                        <!-- <div class="col-4">
                             <Button
                                 label="Done"
                                 icon="pi pi-check-circle"
@@ -344,7 +344,7 @@
                                         totalPaymentsReceived > 0)
                                 "
                             />
-                        </div>
+                        </div> -->
                         <div class="col">
                             <Button
                                 label="Print Receipt & Confirm"
