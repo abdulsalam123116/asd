@@ -70,6 +70,7 @@ class StockController extends Controller
 		}
 
 		$stocks = DB::table('stocks')
+        ->leftJoin('branches', 'stocks.branch_id', '=', 'branches.id')
 		->where(function ($query) use ($keyword) {
 			$query
 			->orWhere('stocks.product_name','LIKE','%'.$keyword.'%')
@@ -78,7 +79,7 @@ class StockController extends Controller
 			->orWhere('stocks.status','LIKE', '%'.$keyword.'%');
 		})
 		->where('stocks.branch_id',$request->storeID)
-		->select('stocks.*')
+        ->select('stocks.*', 'branches.name as branch_name')
 		->limit(20)
 		->offset($request->start)
 		->orderBy('id','DESC')
@@ -292,7 +293,7 @@ class StockController extends Controller
 
 		return response()->json($stocks);
 	}
-	
+
 	public function searchItems(Request $request)
 	{
 		$keyword = $request['keyword'];

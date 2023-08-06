@@ -1061,7 +1061,7 @@ export default class Stocks extends Vue {
 
     // Method to print the barcode with text above
     printBarcode(data) {
-        console.log(data);
+        console.log("barcode data", data);
 
         // Get the canvas element using the ref
         const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
@@ -1077,6 +1077,7 @@ export default class Stocks extends Vue {
         // Add the words above the barcode
         const words = [
             data.product_name,
+            data.branch_name,
             data.generic,
             "Price: " + data.sale_price + " AED",
         ];
@@ -1108,9 +1109,9 @@ export default class Stocks extends Vue {
         const htmlContent = `
             <div style="text-align: center;">
                 <div style="font-size: 14px;">${words[0]}</div>
-                <div style="font-size: 14px;">Alhayat Pharmacy</div>
+                <div style="font-size: 14px;">${words[1]}</div>
                 <img src="${canvasElement.toDataURL()}" />
-                <div style="font-size: 14px;">${words[2]}</div>
+                <div style="font-size: 14px;">${words[3]}</div>
             </div>
             `;
 
