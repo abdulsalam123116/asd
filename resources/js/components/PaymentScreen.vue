@@ -956,12 +956,10 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         //printWindow.close();
     }
 
-    printReceiptAndConfirm() {
-        // First, print the receipt
-        this.printReceipt();
-
-        // Then, proceed with the rest of the payment confirmation process
+     printReceiptAndConfirm() {
         this.confirmPayments();
+
+         this.printReceipt();
     }
 
     emitPayments() {

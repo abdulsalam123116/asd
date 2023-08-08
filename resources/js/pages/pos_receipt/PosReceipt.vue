@@ -1324,6 +1324,7 @@ export default class PosReceipt extends Vue {
 
     getProceededPayments(paymentList) {
         console.log('getProceededPayments called from PosReceipt.vue');
+console.log('paymentList ..,,,',paymentList);
 
         this.paymentList = paymentList;
         const tenderedList = this.getTotalPaid(paymentList);
@@ -1347,6 +1348,9 @@ export default class PosReceipt extends Vue {
         );
 
         this.setAccountingEntries();
+console.log('1111 - paymentList',this.paymentList);
+console.log('222 - savedItemList',this.savedItemList);
+console.log('333 - item',this.item);
 
         this.posService
             .saveItem(
@@ -1359,6 +1363,11 @@ export default class PosReceipt extends Vue {
             .then((res) => {
                 console.log('Response Save Item: ', res);
 
+                // TODO: -  Temporary Solution
+                //localStorage.setItem("myCat", "Tom");
+
+                // TODO:- Print Receipt
+                // this.printReceipt();
                 if (res.alert == "info") {
                     this.clearAll();
                 }
@@ -1368,6 +1377,189 @@ export default class PosReceipt extends Vue {
 
         this.paymentDialog = false;
         this.submitted = false;
+    }
+
+    printReceipt() {
+        // Get the current date and time
+        const currentDate = new Date();
+        const options = {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true, // To display time in 24-hour format
+        };
+        const formattedDate = currentDate.toLocaleDateString(
+            undefined,
+            options
+        );
+
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        var employee = userData ? userData["fullName"] : "";
+
+        console.log("paymentList", this.paymentList);
+
+        const randomDecimal = Math.random();
+        // Multiply the random decimal by 1000000 to get a number between 0 and 999999.999...
+        const randomNumber = randomDecimal * 1000000;
+        // Use Math.floor() to remove the decimal part and get a 6-digit number
+        const invoiceNumber = Math.floor(randomNumber);
+
+        console.log('this.itemList: ',this.itemList);
+
+        // Define the content of the receipt that needs to be printed
+        const receiptContent = `<!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Tax Invoice - Pharmacy</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                        }
+
+                        /* Invoice container styles */
+                        #invoice {
+                            width: 8cm;
+                            margin: 4cm auto; /* Add spacing from top and bottom */
+                            padding: 10px;
+                            border: 1px solid #ccc;
+                        }
+
+                        /* Header styles */
+                        #invoice .header {
+                            text-align: center;
+                            margin-bottom: 10px;
+                        }
+
+                        /* Customer details styles */
+                        #invoice .customer-details {
+                            margin-bottom: 10px;
+                        }
+
+                        /* Item table styles */
+                        #invoice .item-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+
+                        #invoice .item-table th, #invoice .item-table td {
+                            border: 1px solid #ccc;
+                            padding: 5px;
+                            text-align: center;
+                        }
+
+                        /* Total section styles */
+                        #invoice .total {
+                            margin-top: 10px;
+                            text-align: right;
+                        }
+
+                        /* Footer styles */
+                        #invoice .footer {
+                            margin-top: 20px;
+                            text-align: center;
+                        }
+
+                        /* Logo styles */
+                        #logo {
+                            width: 100%;
+                            height: 4cm; /* Set the logo height to 4cm */
+                            display: block;
+                            margin-bottom: 10px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div id="invoice">
+                        <img src="https://alhayatpharmacy.ae/wp-content/uploads/305217401_752369116207039_851646279445606560_n-1-1.png" alt="Pharmacy Logo" id="logo">
+
+                        <div class="header">
+                            <h2>Tax Invoice</h2>
+                            <p>Alhayat Pharmacy</p>
+                            <p>Al Khan - Sharjah</p>
+                            <p>Phone: 06 537 9227</p>
+                        </div>
+
+                        <div class="customer-details">
+                            <p>Date: ${formattedDate}</p>
+                            <p>Invoice No.: ${invoiceNumber} </p>
+                            <p>Customer: ${this.state.selectedProfile}</p>
+                            <p>Employee: ${employee}</p>
+                        </div>
+
+                        <!-- Item Table -->
+                        <table class="item-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${this.itemList
+                                    .map(
+                                        (item) => `
+                                <tr>
+                                    <td>${item.product_name}</td>
+                                    <td>${item.qty}</td>
+                                    <td>${item.sale_price} ${this.currency}</td>
+                                    <td>${item.sub_total} ${this.currency}</td>
+                                </tr>
+                                `
+                                    )
+                                    .join("")}
+                                <!-- You can add more products here -->
+                            </tbody>
+                        </table>
+
+                        <div class="total">
+                            <h4>Net Total: 00 </h4>
+                            ${this.paymentList
+                                .map(
+                                    (item) =>
+                                        `  <p>${item.paymentType} : ${
+                                            item.transTotalAmount +
+                                            " " +
+                                            this.currency
+                                        }</p>`
+                                )
+                                .join("")}
+                            <h3>Total: 0.0 ${this.currency}</h3>
+                            <p>Balance Due: 0.0 ${this.currency}</p>
+                        </div>
+
+                        <div class="footer">
+                            <p>Thank you for your visit, have a nice day!</p>
+                            <br />
+                                <p>By: Smart Link</p>
+                                        </div>
+
+
+                    </div>
+                </body>
+                </html>
+                    `;
+
+        // Create a new hidden window and write the receipt content into it
+        const printWindow = window.open("", "_blank", "width=800,height=auto");
+        printWindow.document.open();
+        printWindow.document.write(receiptContent);
+        printWindow.document.close();
+
+        // Trigger the print dialog for the hidden window
+        printWindow.print();
+
+        // Close the hidden window after printing is done
+        //printWindow.close();
     }
 
     openPaymentMethod(isFormValid) {

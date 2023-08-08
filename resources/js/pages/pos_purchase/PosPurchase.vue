@@ -1,5 +1,5 @@
 <template>
- 
+
     <section>
        <div style="height: 90vh;">
           <div style="height: 0.5vh; background-color:#ccc;">
@@ -335,7 +335,7 @@
                             selectionMode="single"
                             dateFormat="dd-mm-yy"
                             class="p-p-0"
-                            
+
                           />
                       </div>
                     </td>
@@ -430,10 +430,10 @@
                 <InputText placeholder="Bill No" v-model="item.billNo" />
               </div>
             </div>
-           
+
           </div>
         </div>
-       </div>  
+       </div>
         <div style="height: 10vh" class="p-grid p-m-0 p-p-0">
         <Button
           class="p-col p-button-success b-style"
@@ -513,7 +513,7 @@
         />
       </template>
     </Dialog>
-    
+
   <PaymentScreen
     :receiptDetail="{
       dialogStatus: paymentDialog,
@@ -671,7 +671,7 @@ export default class PosPurchase extends Vue {
   get progressBar() {
     return this.store.getters.getProgressBar;
   }
-  
+
   searchProfiler(event) {
     setTimeout(() => {
       this.profilerService.searchProfiler(event.query.trim()).then((data) => {
@@ -782,7 +782,7 @@ export default class PosPurchase extends Vue {
   }
 
   getTheSubtotal(data) {
-    
+
     const qty = Number(data.unit);
     const price = Number(data.purchasePrice);
     const discount = Number(data.itemDisc);
@@ -809,7 +809,7 @@ export default class PosPurchase extends Vue {
 
     //TOTAL UNITS
     data.totalUnit = (data.packSize * data.unit) + data.freeUnit + data.supplierBonus;
-    
+
     //PACK PRICE
     data.sellingPrice = Number(packPrice);
 
@@ -897,7 +897,7 @@ export default class PosPurchase extends Vue {
   }
 
   clearAll() {
-    
+
     this.savedItemList = [];
     this.paymentList = [];
 
@@ -969,6 +969,8 @@ export default class PosPurchase extends Vue {
     this.posService
       .savePurchaseItem(this.item, this.paymentList, this.savedItemList, this.counterEntry)
       .then((res) => {
+        console.log('rrrrrrrrrrrrrrrr', res);
+
         if (res.alert == "info") {
           this.clearAll();
         }
@@ -1161,7 +1163,7 @@ export default class PosPurchase extends Vue {
   }
 
   setAccountingEntries() {
-   
+
     this.counterEntry = [];
 
     if (this.item.type == "PUR") {
@@ -1212,7 +1214,7 @@ export default class PosPurchase extends Vue {
             type: "Credit",
           });
         }
-        
+
         if (this.totalPaidBank > 0) {
           this.counterEntry.push({
             accountID: 8,
@@ -1238,7 +1240,7 @@ export default class PosPurchase extends Vue {
               type: "Credit",
             });
           }
-          
+
           if (this.totalPaidBank > 0) {
             this.counterEntry.push({
               accountID: 8,
@@ -1255,7 +1257,7 @@ export default class PosPurchase extends Vue {
             type: "Credit",
           });
       }
-      
+
     } else if(this.item.type == "RPU") {
 
       if (this.totalBalance == 0) {
@@ -1268,7 +1270,7 @@ export default class PosPurchase extends Vue {
             type: "Debit",
           });
         }
-        
+
         if (this.totalPaidBank > 0) {
           this.counterEntry.push({
             accountID: 8,
@@ -1294,7 +1296,7 @@ export default class PosPurchase extends Vue {
               type: "Debit",
             });
           }
-          
+
           if (this.totalPaidBank > 0) {
             this.counterEntry.push({
               accountID: 8,
