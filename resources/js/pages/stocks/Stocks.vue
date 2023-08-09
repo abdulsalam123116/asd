@@ -1099,7 +1099,7 @@ export default class Stocks extends Vue {
             format: "CODE128",
             displayValue: true,
             margin: 10,
-            fontSize: 18,
+            fontSize: 14,
             textPosition: "bottom",
         });
 
@@ -1107,15 +1107,16 @@ export default class Stocks extends Vue {
 
         // Create an HTML string with the words and the barcode image
         const htmlContent = `
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
             <div style="text-align: center;">
-                <div style="font-size: 14px;">${words[0]}</div>
-                <div style="font-size: 14px;">${words[1]}</div>
+                <div  style="font-size: 16px; font-family: 'Poppins', cursive;font-weight: bolder;">${words[0]}</div>
+                <div style="font-size: 16px ; font-family: 'Poppins', cursive;font-weight: bolder;">${words[1]}</div>
                 <img src="${canvasElement.toDataURL()}" />
-                <div style="font-size: 14px;">${words[3]}</div>
+                <div style="font-size: 16px; font-family: 'Poppins', cursive;font-weight: bolder;">${words[3]}</div>
             </div>
             `;
 
-        const printWindow = window.open("", "_blank", "width=500,height=250");
+        const printWindow = window.open("", "_blank", "width=400,height=150");
         printWindow.document.open();
         printWindow.document.write(htmlContent);
         printWindow.document.close();
