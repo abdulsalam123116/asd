@@ -1065,19 +1065,20 @@ export default class Stocks extends Vue {
 
         // Get the canvas element using the ref
         const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
-        const barcodeValue = data.batch_no + data.expiry_date.replace(/-/g, ""); // Append expiry_date to the barcode
+        const barcodeValue = data.batch_no + data.expiry_date.replace(/-/g, "");
+        const expiryDate = data.expiry_date;//.replace(/-/g, "");
 
         // Set the font and style for the text
         const ctx = canvasElement.getContext("2d");
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Clear the canvas before drawing
-        ctx.font = "14px Arial";
+        ctx.font = "bold 14px Poppins";
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
 
         // Add the words above the barcode
         const words = [
-            data.product_name,
             data.branch_name,
+            data.product_name,
             data.generic,
             "Price: " + data.sale_price + " AED",
         ];
@@ -1108,11 +1109,19 @@ export default class Stocks extends Vue {
         // Create an HTML string with the words and the barcode image
         const htmlContent = `
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
-            <div style="text-align: center;">
-                <div  style="font-size: 16px; font-family: 'Poppins', cursive;font-weight: bolder;">${words[0]}</div>
-                <div style="font-size: 16px ; font-family: 'Poppins', cursive;font-weight: bolder;">${words[1]}</div>
+            <div style="text-align: left;">
+                <div  style="font-size: 16px; font-family: 'Poppins', cursive;font-weight: bolder;">${
+                    words[0]
+                }</div>
+                <div style="font-size: 18px ; font-family: 'Poppins', cursive;font-weight: bolder;">${
+                    words[1]
+                }</div>
                 <img src="${canvasElement.toDataURL()}" />
-                <div style="font-size: 16px; font-family: 'Poppins', cursive;font-weight: bolder;">${words[3]}</div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
+                    <div style="font-size: 18px; font-family: 'Poppins', cursive; font-weight: bolder;">${words[3]}</div>
+                    <div style="font-size: 18px; font-family: 'Poppins', cursive; font-weight: bolder;">${expiryDate}</div>
+                </div>
             </div>
             `;
 
