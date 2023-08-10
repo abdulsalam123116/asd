@@ -512,6 +512,8 @@
                         :class="{
                             'p-invalid': v$.packPurchase.$invalid && submitted,
                         }"
+                        :minFractionDigits="0"
+                        :maxFractionDigits="3"
                     />
                     <small
                         v-if="
@@ -537,6 +539,8 @@
                         id="mRP"
                         v-model="v$.mRP.$model"
                         :class="{ 'p-invalid': v$.mRP.$invalid && submitted }"
+                        :minFractionDigits="0"
+                        :maxFractionDigits="3"
                     />
                     <small
                         v-if="
@@ -1066,7 +1070,7 @@ export default class Stocks extends Vue {
         // Get the canvas element using the ref
         const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
         const barcodeValue = data.batch_no + data.expiry_date.replace(/-/g, "");
-        const expiryDate = data.expiry_date;//.replace(/-/g, "");
+        const expiryDate = data.expiry_date; //.replace(/-/g, "");
 
         // Set the font and style for the text
         const ctx = canvasElement.getContext("2d");
@@ -1080,7 +1084,10 @@ export default class Stocks extends Vue {
             data.branch_name,
             data.product_name,
             data.generic,
-            "Price: " + data.sale_price + ' ' + localStorage.getItem('currency') ?? "AED",
+            "Price: " +
+                data.sale_price +
+                " " +
+                localStorage.getItem("currency") ?? "AED",
         ];
 
         const canvasCenterX = canvasElement.width / 2;
@@ -1118,10 +1125,9 @@ export default class Stocks extends Vue {
                 }</div>
                 <img src="${canvasElement.toDataURL()}" />
 
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
-                    <div style="font-size: 21px; font-family: Arial, 'Poppins' ; font-weight: 500;">${words[3]}</div>
-                    <div style="font-size: 21px; font-family: Arial, 'Poppins' ; font-weight: 500;">EXP: ${expiryDate}</div>
-                </div>
+                    <div style="font-size: 21px; font-family: Arial, 'Poppins' ; font-weight: 500;">${
+                        words[3]
+                    } &nbsp &nbsp EXP: ${expiryDate}</div>
             </div>
             `;
 
