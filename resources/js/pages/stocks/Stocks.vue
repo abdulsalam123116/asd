@@ -1071,7 +1071,7 @@ export default class Stocks extends Vue {
         // Set the font and style for the text
         const ctx = canvasElement.getContext("2d");
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Clear the canvas before drawing
-        ctx.font = "bold 14px Poppins";
+        ctx.font = "14px Poppins";
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
 
@@ -1110,17 +1110,17 @@ export default class Stocks extends Vue {
         const htmlContent = `
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
             <div style="text-align: left;">
-                <div  style="font-size: 19px; font-family: 'Poppins', cursive;font-weight: bolder;">${
+                <div  style="font-size: 19px; font-family: 'Poppins', cursive;">${
                     words[0]
                 }</div>
-                <div style="font-size: 21px ; font-family: 'Poppins', cursive;font-weight: bolder;">${
+                <div style="font-size: 21px ; font-family: 'Poppins', cursive; ">${
                     words[1]
                 }</div>
                 <img src="${canvasElement.toDataURL()}" />
 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
-                    <div style="font-size: 21px; font-family: 'Poppins', cursive; font-weight: bolder;">${words[3]}</div>
-                    <div style="font-size: 21px; font-family: 'Poppins', cursive; font-weight: bolder;">EXP: ${expiryDate}</div>
+                    <div style="font-size: 21px; font-family: 'Poppins', cursive;">${words[3]}</div>
+                    <div style="font-size: 21px; font-family: 'Poppins', cursive;">EXP: ${expiryDate}</div>
                 </div>
             </div>
             `;
