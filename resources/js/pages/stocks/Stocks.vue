@@ -1110,7 +1110,7 @@ export default class Stocks extends Vue {
         const htmlContent = `
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
             <div style="text-align: left;">
-                <div  style="font-size: 19px; font-family: Arial, 'Poppins' ;font-weight: 500;">${
+                <div  style="font-size: 21px; font-family: Arial, 'Poppins' ;font-weight: 500;">${
                     words[0]
                 }</div>
                 <div style="font-size: 21px ; font-family: Arial, 'Poppins' ;font-weight: 500;">${
