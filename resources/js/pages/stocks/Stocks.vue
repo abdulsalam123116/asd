@@ -1080,7 +1080,7 @@ export default class Stocks extends Vue {
             data.branch_name,
             data.product_name,
             data.generic,
-            "Price: " + data.sale_price + " AED",
+            "Price: " + data.sale_price + ' ' + localStorage.getItem('currency') ?? "AED",
         ];
 
         const canvasCenterX = canvasElement.width / 2;
@@ -1100,7 +1100,7 @@ export default class Stocks extends Vue {
             format: "CODE128",
             displayValue: true,
             margin: 10,
-            fontSize: 14,
+            fontSize: 10,
             textPosition: "bottom",
         });
 
@@ -1110,17 +1110,17 @@ export default class Stocks extends Vue {
         const htmlContent = `
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
             <div style="text-align: left;">
-                <div  style="font-size: 16px; font-family: 'Poppins', cursive;font-weight: bolder;">${
+                <div  style="font-size: 19px; font-family: 'Poppins', cursive;font-weight: bolder;">${
                     words[0]
                 }</div>
-                <div style="font-size: 18px ; font-family: 'Poppins', cursive;font-weight: bolder;">${
+                <div style="font-size: 21px ; font-family: 'Poppins', cursive;font-weight: bolder;">${
                     words[1]
                 }</div>
                 <img src="${canvasElement.toDataURL()}" />
 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
-                    <div style="font-size: 18px; font-family: 'Poppins', cursive; font-weight: bolder;">${words[3]}</div>
-                    <div style="font-size: 18px; font-family: 'Poppins', cursive; font-weight: bolder;">${expiryDate}</div>
+                    <div style="font-size: 21px; font-family: 'Poppins', cursive; font-weight: bolder;">${words[3]}</div>
+                    <div style="font-size: 21px; font-family: 'Poppins', cursive; font-weight: bolder;">EXP: ${expiryDate}</div>
                 </div>
             </div>
             `;
