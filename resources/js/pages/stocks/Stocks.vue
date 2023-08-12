@@ -1136,8 +1136,9 @@ export default class Stocks extends Vue {
         printWindow.document.write(htmlContent);
         printWindow.document.close();
 
-        // Print the window
-        printWindow.print();
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
 
         // Close the window after printing
         // printWindow.close();
