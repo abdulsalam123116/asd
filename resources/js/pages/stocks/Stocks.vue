@@ -1069,7 +1069,7 @@ export default class Stocks extends Vue {
 
         // Get the canvas element using the ref
         const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
-        const barcodeValue = data.batch_no + data.expiry_date.replace(/-/g, "");
+        const barcodeValue = data.batch_no; //+ data.expiry_date.replace(/-/g, "");
         const expiryDate = data.expiry_date; //.replace(/-/g, "");
 
         // Set the font and style for the text
