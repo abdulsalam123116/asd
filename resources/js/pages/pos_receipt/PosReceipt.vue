@@ -739,7 +739,7 @@
             customerName: this.state.selectedProfile,
             closeConfirmation: true,
             itemList: this.savedItemList,
-            netTotal: this.netTotal
+            netTotal: this.netTotal,
         }"
         v-on:closePaymentScreenEvent="closePaymentScreen"
         v-on:getProceededPaymentsEvent="getProceededPayments"
@@ -842,7 +842,7 @@ export default class PosReceipt extends Vue {
     private profilerList = [];
     private itemList = [];
     private store = useStore();
-
+    private employeeName = "";
     private counterEntry: CounterEntry[] = [];
 
     private screenState = reactive({
@@ -1086,6 +1086,7 @@ export default class PosReceipt extends Vue {
             ) {
                 this.selectedTaxes.tax3 = true;
             }
+            console.log("vvvvvvvvvvvvv", data);
 
             //Default Customer
             this.state.selectedProfile = data.defaultCustomer.account_title;
@@ -1094,6 +1095,9 @@ export default class PosReceipt extends Vue {
             this.defaultCustomerID = data.defaultCustomer.id;
             this.currentUserID = data.currentUserID;
             this.storeName = data.storeName;
+
+            const userInfo = data.currentUserInfo;
+            this.employeeName = userInfo.name;
         });
     }
 
@@ -1323,8 +1327,8 @@ export default class PosReceipt extends Vue {
     }
 
     getProceededPayments(paymentList) {
-        console.log('getProceededPayments called from PosReceipt.vue');
-console.log('paymentList ..,,,',paymentList);
+        console.log("getProceededPayments called from PosReceipt.vue");
+        console.log("paymentList ..,,,", paymentList);
 
         this.paymentList = paymentList;
         const tenderedList = this.getTotalPaid(paymentList);
@@ -1334,7 +1338,7 @@ console.log('paymentList ..,,,',paymentList);
 
         const method = this.getPaymentMethod(paymentList);
         this.item.paymentMethod = method;
-        console.log('Method....: ', method);
+        console.log("Method....: ", method);
 
         this.item.discount = this.totalDiscAmount;
         this.item.totalGrossAmt = this.totalGross;
@@ -1348,9 +1352,9 @@ console.log('paymentList ..,,,',paymentList);
         );
 
         this.setAccountingEntries();
-console.log('1111 - paymentList',this.paymentList);
-console.log('222 - savedItemList',this.savedItemList);
-console.log('333 - item',this.item);
+        console.log("1111 - paymentList", this.paymentList);
+        console.log("222 - savedItemList", this.savedItemList);
+        console.log("333 - item", this.item);
 
         this.posService
             .saveItem(
@@ -1361,7 +1365,7 @@ console.log('333 - item',this.item);
                 this.counterEntry
             )
             .then((res) => {
-                console.log('Response Save Item: ', res);
+                console.log("Response Save Item: ", res);
 
                 // TODO: -  Temporary Solution
                 //localStorage.setItem("myCat", "Tom");
@@ -1396,8 +1400,8 @@ console.log('333 - item',this.item);
             options
         );
 
-        const userData = JSON.parse(localStorage.getItem("userData"));
-        var employee = userData ? userData["fullName"] : "";
+        // const userData = JSON.parse(localStorage.getItem("userData"));
+        // var employee = userData ? userData["fullName"] : "";
 
         console.log("paymentList", this.paymentList);
 
@@ -1407,7 +1411,7 @@ console.log('333 - item',this.item);
         // Use Math.floor() to remove the decimal part and get a 6-digit number
         const invoiceNumber = Math.floor(randomNumber);
 
-        console.log('this.itemList: ',this.itemList);
+        console.log("this.itemList: ", this.itemList);
 
         // Define the content of the receipt that needs to be printed
         const receiptContent = `<!DOCTYPE html>
@@ -1482,7 +1486,7 @@ console.log('333 - item',this.item);
 
                         <div class="header">
                             <h2>Tax Invoice</h2>
-                            <p>Alhayat Pharmacy</p>
+                            <p>${this.storeName}</p>
                             <p>Al Khan - Sharjah</p>
                             <p>Phone: 06 537 9227</p>
                         </div>
@@ -1491,7 +1495,7 @@ console.log('333 - item',this.item);
                             <p>Date: ${formattedDate}</p>
                             <p>Invoice No.: ${invoiceNumber} </p>
                             <p>Customer: ${this.state.selectedProfile}</p>
-                            <p>Employee: ${employee}</p>
+                            <p>Employee: ${this.employeeName}</p>
                         </div>
 
                         <!-- Item Table -->
@@ -1556,7 +1560,9 @@ console.log('333 - item',this.item);
         printWindow.document.close();
 
         // Trigger the print dialog for the hidden window
-        printWindow.print();
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
 
         // Close the hidden window after printing is done
         //printWindow.close();

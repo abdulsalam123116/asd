@@ -114,7 +114,7 @@ export default class ProfilerService {
 				store.dispatch(ActionTypes.PROGRESS_BAR, false);
 			})
 	}
-	
+
 	searchProfiler(keyword) {
 		//SHOW LOADING
 		const store = useStore();

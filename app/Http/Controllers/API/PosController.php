@@ -47,6 +47,7 @@ class PosController extends Controller
             'storeTaxes' => $storeTaxes,
             'stores' => $stores,
             'currentUserID' => Auth::user()->id,
+            'currentUserInfo'=> Auth::user(),
             'storeName' => $storeTaxes[0]->name
         ];
     }

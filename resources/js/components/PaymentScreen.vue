@@ -16,7 +16,7 @@
         </template>
         <!--row open-->
         <div class="row text-center">
-            <div class="col-md-12">
+            <div class="col-md-9">
                 <p class="pay-size-bx">
                     <label class="py-span">
                         <img src="@/assets/pay/cash.png" />
@@ -44,6 +44,11 @@
                         />
                     </label>
                 </p>
+            </div>
+            <!-- Add input field for discount -->
+            <div class="pay-size-bx">
+                <label class="py-span badge bg-warning">Discount Amount:</label>
+                <InputNumber v-model="discountAmount" />
             </div>
         </div>
         <div class="row py-description">
@@ -518,6 +523,8 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
     private paymentList: PaymentListType[] = [];
 
+    private discountAmount: number = 0; // Add the discountAmount property here
+
     created() {
         this.paymentService = new PaymentService();
         this.toast = new Toaster();
@@ -749,10 +756,14 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         } else {
             //nothing
         }
+        console.log("amountLeftTemp...", amountLeftTemp);
 
         this.paymentAction.tendered = 0;
         this.screenNumber = "";
 
+        // Do Discount for amountLeftTemp
+        var discountAmount = amountLeftTemp * (this.discountAmount / 100);
+        amountLeftTemp = amountLeftTemp - discountAmount;
         return amountLeftTemp;
     }
 
@@ -926,6 +937,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                             <h3>Total: ${this.fixLength(
                                 this.totalPaymentsReceived
                             )} ${this.currency}</h3>
+                            <p>Discount: ${this.discountAmount}%</p>
                             <p>Balance Due: ${this.fixLength(
                                 this.paymentRounding
                             )} ${this.currency}</p>
@@ -956,10 +968,10 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         //printWindow.close();
     }
 
-     printReceiptAndConfirm() {
+    printReceiptAndConfirm() {
         this.confirmPayments();
 
-         this.printReceipt();
+        this.printReceipt();
     }
 
     emitPayments() {
