@@ -47,7 +47,7 @@
             </div>
             <!-- Add input field for discount -->
             <div class="pay-size-bx">
-                <label class="py-span badge bg-warning">Discount Amount:</label>
+                <label class="py-span badge bg-warning">Discount Amount %</label>
                 <InputNumber v-model="discountAmount" />
             </div>
         </div>
@@ -469,7 +469,7 @@ interface PaymentListType {
     },
     watch: {
         receiptDetail(obj) {
-            console.log(obj);
+            console.log("objjjj", obj);
 
             this.paymentDialog = obj.dialogStatus;
             this.closeConfirmation = obj.closeConfirmation;
@@ -483,6 +483,11 @@ interface PaymentListType {
             this.paymentAction.needlePoints = obj.needlePoints;
             this.dialogTilte =
                 obj.dialogTilte + " for Customer " + this.customerName;
+
+            this.employeeName = obj.employeeName;
+            this.storeName = obj.storeName;
+            this.storeAddress = obj.storeAddress;
+
         },
     },
     emits: ["closePaymentScreenEvent", "getProceededPaymentsEvent"],
@@ -524,6 +529,10 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     private paymentList: PaymentListType[] = [];
 
     private discountAmount: number = 0; // Add the discountAmount property here
+
+    private employeeName = "";
+    private storeName = "";
+    private storeAddress = "";
 
     created() {
         this.paymentService = new PaymentService();
@@ -881,8 +890,8 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
                         <div class="header">
                             <h2>Tax Invoice</h2>
-                            <p>Alhayat Pharmacy</p>
-                            <p>Al Khan - Sharjah</p>
+                            <p>${this.storeName}</p>
+                            <p>${this.storeAddress}</p>
                             <p>Phone: 06 537 9227</p>
                         </div>
 
@@ -890,7 +899,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                             <p>Date: ${formattedDate}</p>
                             <p>Invoice No.: ${invoiceNumber} </p>
                             <p>Customer: ${this.customerName}</p>
-                            <p>Employee: ${employee}</p>
+                            <p>Employee: ${this.employeeName}</p>
                         </div>
 
                         <!-- Item Table -->
@@ -962,8 +971,9 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         printWindow.document.close();
 
         // Trigger the print dialog for the hidden window
-        printWindow.print();
-
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
         // Close the hidden window after printing is done
         //printWindow.close();
     }

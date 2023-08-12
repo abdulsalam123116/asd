@@ -740,6 +740,9 @@
             closeConfirmation: true,
             itemList: this.savedItemList,
             netTotal: this.netTotal,
+            employeeName:this.employeeName,
+            storeAddress:this.storeAddress,
+            storeName:this.storeName,
         }"
         v-on:closePaymentScreenEvent="closePaymentScreen"
         v-on:getProceededPaymentsEvent="getProceededPayments"
@@ -827,6 +830,7 @@ export default class PosReceipt extends Vue {
     private profileStatus = false;
     private statusType = "New";
     private storeName = "Loading...";
+    private storeAddress = "Loading...";
     private refundReceiptDialog = false;
     private submitted = false;
     private defaultCustomerName = "";
@@ -1095,6 +1099,8 @@ export default class PosReceipt extends Vue {
             this.defaultCustomerID = data.defaultCustomer.id;
             this.currentUserID = data.currentUserID;
             this.storeName = data.storeName;
+            this.storeAddress = data.storeAddress;
+
 
             const userInfo = data.currentUserInfo;
             this.employeeName = userInfo.name;
@@ -1412,6 +1418,7 @@ export default class PosReceipt extends Vue {
         const invoiceNumber = Math.floor(randomNumber);
 
         console.log("this.itemList: ", this.itemList);
+console.log('ggggggggggg',this.employeeName);
 
         // Define the content of the receipt that needs to be printed
         const receiptContent = `<!DOCTYPE html>
