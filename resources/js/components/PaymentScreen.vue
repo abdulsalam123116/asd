@@ -356,6 +356,25 @@
                             />
                         </div> -->
                         <div class="col">
+                            <div>
+                                <!-- Other content -->
+                                <PrintReceiptDialog
+                                    ref="PrintReceiptDialogRef"
+                                    :storeName="storeName"
+                                    :storeAddress="storeAddress"
+                                    formattedDate="formattedDate"
+                                    invoiceNumber="invoiceNumber"
+                                    customerName="customerName"
+                                    employeeName="employeeName"
+                                    :itemList="[]"
+                                    :totalBill="1000"
+                                    :paymentList="[]"
+                                    :totalPaymentsReceived="20"
+                                    :discountAmount="0.0"
+                                    :paymentRounding="0"
+                                    currency="currency"
+                                />
+                            </div>
                             <Button
                                 label="Print Receipt & Confirm"
                                 icon="pi pi-print"
@@ -435,6 +454,8 @@ import { Options, mixins } from "vue-class-component";
 import Toaster from "../helpers/Toaster";
 import PaymentService from "../service/PaymentService";
 import UtilityOptions from "../mixins/UtilityOptions";
+import PrintReceiptDialog from "./PrintReceiptDialog.vue";
+import { ref } from "vue";
 
 interface IPaymentMethod {
     bankId: number;
@@ -471,6 +492,9 @@ interface PaymentListType {
 @Options({
     props: {
         receiptDetail: Object,
+    },
+    components: {
+        PrintReceiptDialog,
     },
     watch: {
         receiptDetail(obj) {
@@ -539,6 +563,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     private employeeName = "";
     private storeName = "";
     private storeAddress = "";
+    private PrintReceiptDialogRef = ref(null);
 
     created() {
         this.paymentService = new PaymentService();
@@ -820,6 +845,8 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         const randomNumber = randomDecimal * 1000000;
         // Use Math.floor() to remove the decimal part and get a 6-digit number
         const invoiceNumber = Math.floor(randomNumber);
+        const logoSrc =
+            require("@/assets/images/pharmacy-Receipt-logo.png").default;
 
         // Define the content of the receipt that needs to be printed
         const receiptContent = `<!DOCTYPE html>
@@ -889,82 +916,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                     </style>
                 </head>
                 <body>
-                    <div id="invoice">
-                        <img src="https://alhayatpharmacy.ae/wp-content/uploads/305217401_752369116207039_851646279445606560_n-1-1.png" alt="Pharmacy Logo" id="logo">
 
-                        <div class="header">
-                            <h2>Tax Invoice</h2>
-                            <p>${this.storeName}</p>
-                            <p>${this.storeAddress}</p>
-                            <p>Phone: 06 537 9227</p>
-                        </div>
-
-                        <div class="customer-details">
-                            <p>Date: ${formattedDate}</p>
-                            <p>Invoice No.: ${invoiceNumber} </p>
-                            <p>Customer: ${this.customerName}</p>
-                            <p>Employee: ${this.employeeName}</p>
-                        </div>
-
-                        <!-- Item Table -->
-                        <table class="item-table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${this.itemList
-                                    .map(
-                                        (item) => `
-                                <tr>
-                                    <td>${item.productName}</td>
-                                    <td>${item.unit}</td>
-                                    <td>${item.sellingPrice} ${this.currency}</td>
-                                    <td>${item.subTotal} ${this.currency}</td>
-                                </tr>
-                                `
-                                    )
-                                    .join("")}
-                                <!-- You can add more products here -->
-                            </tbody>
-                        </table>
-
-                        <div class="total">
-                            <h4>Net Total: ${this.fixLength(
-                                this.totalBill
-                            )} </h4>
-                            ${this.paymentList
-                                .map(
-                                    (item) =>
-                                        `  <p>${item.paymentType} : ${
-                                            item.transTotalAmount +
-                                            " " +
-                                            this.currency
-                                        }</p>`
-                                )
-                                .join("")}
-                            <h3>Total: ${this.fixLength(
-                                this.totalPaymentsReceived
-                            )} ${this.currency}</h3>
-                            <p>Discount: ${this.discountAmount}%</p>
-                            <p>Balance Due: ${this.fixLength(
-                                this.paymentRounding
-                            )} ${this.currency}</p>
-                        </div>
-
-                        <div class="footer">
-                            <p>Thank you for your visit, have a nice day!</p>
-                            <br />
-                                <p>By: Smart Link</p>
-                                        </div>
-
-
-                    </div>
-                </body>
                 </html>
                     `;
 
@@ -983,9 +935,11 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     }
 
     printReceiptAndConfirm() {
-        this.confirmPayments();
 
-        this.printReceipt();
+        this.PrintReceiptDialogRef.printReceipt();
+        // this.confirmPayments();
+
+        // this.printReceipt();
     }
 
     emitPayments() {
