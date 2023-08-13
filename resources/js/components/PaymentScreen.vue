@@ -47,8 +47,13 @@
             </div>
             <!-- Add input field for discount -->
             <div class="pay-size-bx">
-                <label class="py-span badge bg-warning">Discount Amount %</label>
-                <InputNumber v-model="discountAmount" />
+                <label class="py-span badge bg-warning"
+                    >Discount Amount %</label
+                >
+                <InputNumber
+                    v-model="discountAmount"
+                    @keypress="addDiscount(discountAmount)"
+                />
             </div>
         </div>
         <div class="row py-description">
@@ -487,7 +492,9 @@ interface PaymentListType {
             this.employeeName = obj.employeeName;
             this.storeName = obj.storeName;
             this.storeAddress = obj.storeAddress;
-
+        },
+        discountAmount(newDiscount) {
+            this.addDiscount();
         },
     },
     emits: ["closePaymentScreenEvent", "getProceededPaymentsEvent"],
@@ -517,6 +524,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     private screenNumber = "";
     private paymentMethodType = "Cash";
     private amountLeft = 0;
+    private discountAmount: number = 0; // Add the discountAmount property here
     private roundedAmt = 0;
     private tipAmountTerminal = 0;
     private paymentAction = {
@@ -527,8 +535,6 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     private netTotal = 0;
 
     private paymentList: PaymentListType[] = [];
-
-    private discountAmount: number = 0; // Add the discountAmount property here
 
     private employeeName = "";
     private storeName = "";
@@ -609,7 +615,6 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
     get totalPaymentsReceived() {
         let total = 0;
-
         this.paymentList.forEach((e) => {
             if (e.paymentType != "Tip") {
                 total = total + e.transTotalAmount;
@@ -617,6 +622,15 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         });
 
         return Number(total);
+    }
+
+    addDiscount(discountAmount) {
+        const total = this.netTotal;
+        this.amountLeft = total;
+        const discount = this.amountLeft * (this.discountAmount / 100);
+
+        this.paymentRounding;
+        this.amountLeft = this.amountLeft - discount;
     }
 
     addCashAmount() {
@@ -744,9 +758,6 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         //REDUCING THE AMOUNT PAID
         this.paymentList.forEach((e) => {
             if (e.paymentType != "Tip") {
-                console.log("e.transTotalAmount", e.transTotalAmount);
-                console.log("amountPaidTemp", amountPaidTemp);
-
                 amountPaidTemp = amountPaidTemp + e.transTotalAmount;
             }
         });
@@ -765,14 +776,10 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         } else {
             //nothing
         }
-        console.log("amountLeftTemp...", amountLeftTemp);
 
         this.paymentAction.tendered = 0;
         this.screenNumber = "";
 
-        // Do Discount for amountLeftTemp
-        var discountAmount = amountLeftTemp * (this.discountAmount / 100);
-        amountLeftTemp = amountLeftTemp - discountAmount;
         return amountLeftTemp;
     }
 
@@ -805,9 +812,6 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
             undefined,
             options
         );
-
-        const userData = JSON.parse(localStorage.getItem("userData"));
-        var employee = userData ? userData["fullName"] : "";
 
         console.log("paymentList", this.paymentList);
 
@@ -931,7 +935,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
                         <div class="total">
                             <h4>Net Total: ${this.fixLength(
-                                this.netTotal
+                                this.totalBill
                             )} </h4>
                             ${this.paymentList
                                 .map(
