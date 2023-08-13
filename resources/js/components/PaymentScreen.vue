@@ -472,6 +472,7 @@ interface PaymentListType {
     props: {
         receiptDetail: Object,
     },
+
     watch: {
         receiptDetail(obj) {
             console.log("objjjj", obj);
@@ -820,6 +821,8 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         const randomNumber = randomDecimal * 1000000;
         // Use Math.floor() to remove the decimal part and get a 6-digit number
         const invoiceNumber = Math.floor(randomNumber);
+        const logoSrc =
+            require("@/assets/images/pharmacy-Receipt-logo.png").default;
 
         // Define the content of the receipt that needs to be printed
         const receiptContent = `<!DOCTYPE html>
@@ -890,7 +893,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                 </head>
                 <body>
                     <div id="invoice">
-                        <img src="https://alhayatpharmacy.ae/wp-content/uploads/305217401_752369116207039_851646279445606560_n-1-1.png" alt="Pharmacy Logo" id="logo">
+                        <img src="${logoSrc}" alt="Pharmacy Logo" id="logo">
 
                         <div class="header">
                             <h2>Tax Invoice</h2>
@@ -959,10 +962,8 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
                         <div class="footer">
                             <p>Thank you for your visit, have a nice day!</p>
                             <br />
-                                <p>By: Smart Link</p>
-                                        </div>
-
-
+                            <p>By: Smart Link</p>
+                        </div>
                     </div>
                 </body>
                 </html>
@@ -985,11 +986,11 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     printReceiptAndConfirm() {
         this.confirmPayments();
 
-        this.printReceipt();
+        //this.printReceipt();
     }
 
     emitPayments() {
-        this.$emit("getProceededPaymentsEvent", this.paymentList);
+        this.$emit("getProceededPaymentsEvent", this.paymentList, this.discountAmount);
         this.paymentDialog = false;
         this.paymentConfirmDialog = false;
         this.paymentList = [];
@@ -998,6 +999,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
 
     clearPaymentScreen() {
         this.amountLeft = 0;
+        this.discountAmount = 0;
         this.paymentAction.tendered = 0;
         this.paymentAction.needlePoints = 0;
     }

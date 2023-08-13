@@ -740,9 +740,9 @@
             closeConfirmation: true,
             itemList: this.savedItemList,
             netTotal: this.netTotal,
-            employeeName:this.employeeName,
-            storeAddress:this.storeAddress,
-            storeName:this.storeName,
+            employeeName: this.employeeName,
+            storeAddress: this.storeAddress,
+            storeName: this.storeName,
         }"
         v-on:closePaymentScreenEvent="closePaymentScreen"
         v-on:getProceededPaymentsEvent="getProceededPayments"
@@ -847,6 +847,8 @@ export default class PosReceipt extends Vue {
     private itemList = [];
     private store = useStore();
     private employeeName = "";
+    private discount = 0;
+    private receipt_no = "";
     private counterEntry: CounterEntry[] = [];
 
     private screenState = reactive({
@@ -1101,7 +1103,6 @@ export default class PosReceipt extends Vue {
             this.storeName = data.storeName;
             this.storeAddress = data.storeAddress;
 
-
             const userInfo = data.currentUserInfo;
             this.employeeName = userInfo.name;
         });
@@ -1332,9 +1333,10 @@ export default class PosReceipt extends Vue {
         this.paymentDialog = false;
     }
 
-    getProceededPayments(paymentList) {
+    getProceededPayments(paymentList, discount) {
         console.log("getProceededPayments called from PosReceipt.vue");
         console.log("paymentList ..,,,", paymentList);
+        console.log("discount ..,,,", discount);
 
         this.paymentList = paymentList;
         const tenderedList = this.getTotalPaid(paymentList);
@@ -1357,6 +1359,8 @@ export default class PosReceipt extends Vue {
             this.totalTax1 + this.totalTax2 + this.totalTax3
         );
 
+        this.discount = discount;
+
         this.setAccountingEntries();
         console.log("1111 - paymentList", this.paymentList);
         console.log("222 - savedItemList", this.savedItemList);
@@ -1372,12 +1376,12 @@ export default class PosReceipt extends Vue {
             )
             .then((res) => {
                 console.log("Response Save Item: ", res);
-
+                this.receipt_no = res.receipt_no;
                 // TODO: -  Temporary Solution
                 //localStorage.setItem("myCat", "Tom");
 
                 // TODO:- Print Receipt
-                // this.printReceipt();
+                this.printReceipt();
                 if (res.alert == "info") {
                     this.clearAll();
                 }
@@ -1406,20 +1410,27 @@ export default class PosReceipt extends Vue {
             options
         );
 
-        // const userData = JSON.parse(localStorage.getItem("userData"));
-        // var employee = userData ? userData["fullName"] : "";
-
         console.log("paymentList", this.paymentList);
 
-        const randomDecimal = Math.random();
-        // Multiply the random decimal by 1000000 to get a number between 0 and 999999.999...
-        const randomNumber = randomDecimal * 1000000;
         // Use Math.floor() to remove the decimal part and get a 6-digit number
-        const invoiceNumber = Math.floor(randomNumber);
+        const logoSrc =
+            require("@/assets/images/pharmacy-Receipt-logo.png").default;
 
-        console.log("this.itemList: ", this.itemList);
-console.log('ggggggggggg',this.employeeName);
+        console.log(
+            "savedItemList .. savedItemList... savedItemList",
+            this.savedItemList
+        );
 
+        const total = this.netTotal - (this.netTotal * this.discount) / 100; // after discount
+        var totalPaid = 0;
+
+        this.paymentList.forEach((e) => {
+            if (e.paymentType != "Tip") {
+                totalPaid = totalPaid + e.transTotalAmount;
+            }
+        });
+
+        const balanceDue = total - totalPaid;
         // Define the content of the receipt that needs to be printed
         const receiptContent = `<!DOCTYPE html>
                 <html lang="en">
@@ -1489,18 +1500,18 @@ console.log('ggggggggggg',this.employeeName);
                 </head>
                 <body>
                     <div id="invoice">
-                        <img src="https://alhayatpharmacy.ae/wp-content/uploads/305217401_752369116207039_851646279445606560_n-1-1.png" alt="Pharmacy Logo" id="logo">
+                        <img src="${logoSrc}" alt="Pharmacy Logo" id="logo">
 
                         <div class="header">
                             <h2>Tax Invoice</h2>
                             <p>${this.storeName}</p>
-                            <p>Al Khan - Sharjah</p>
+                            <p>${this.storeAddress}</p>
                             <p>Phone: 06 537 9227</p>
                         </div>
 
                         <div class="customer-details">
                             <p>Date: ${formattedDate}</p>
-                            <p>Invoice No.: ${invoiceNumber} </p>
+                            <p>Invoice No.: ${this.receipt_no} </p>
                             <p>Customer: ${this.state.selectedProfile}</p>
                             <p>Employee: ${this.employeeName}</p>
                         </div>
@@ -1516,14 +1527,14 @@ console.log('ggggggggggg',this.employeeName);
                                 </tr>
                             </thead>
                             <tbody>
-                                ${this.itemList
+                                ${this.savedItemList
                                     .map(
                                         (item) => `
                                 <tr>
-                                    <td>${item.product_name}</td>
-                                    <td>${item.qty}</td>
-                                    <td>${item.sale_price} ${this.currency}</td>
-                                    <td>${item.sub_total} ${this.currency}</td>
+                                    <td>${item.productName}</td>
+                                    <td>${item.unit}</td>
+                                    <td>${item.sellingPrice} ${this.currency}</td>
+                                    <td>${item.subTotal} ${this.currency}</td>
                                 </tr>
                                 `
                                     )
@@ -1533,7 +1544,9 @@ console.log('ggggggggggg',this.employeeName);
                         </table>
 
                         <div class="total">
-                            <h4>Net Total: 00 </h4>
+                            <h4>Net Total: ${this.fixLength(
+                                this.netTotal
+                            )} </h4>
                             ${this.paymentList
                                 .map(
                                     (item) =>
@@ -1544,17 +1557,20 @@ console.log('ggggggggggg',this.employeeName);
                                         }</p>`
                                 )
                                 .join("")}
-                            <h3>Total: 0.0 ${this.currency}</h3>
-                            <p>Balance Due: 0.0 ${this.currency}</p>
+                            <h3>Total: ${this.fixLength(total)} ${
+            this.currency
+        }</h3>
+                            <p>Discount: ${this.discount}%</p>
+                            <p>Balance Due: ${this.fixLength(balanceDue)} ${
+            this.currency
+        }</p>
                         </div>
 
                         <div class="footer">
                             <p>Thank you for your visit, have a nice day!</p>
                             <br />
-                                <p>By: Smart Link</p>
-                                        </div>
-
-
+                            <p>By: Smart Link</p>
+                        </div>
                     </div>
                 </body>
                 </html>
@@ -1570,9 +1586,21 @@ console.log('ggggggggggg',this.employeeName);
         setTimeout(() => {
             printWindow.print();
         }, 500);
-
         // Close the hidden window after printing is done
         //printWindow.close();
+    }
+
+    fixLength(value) {
+        const num = Number(value);
+        value = num.toFixed(2);
+        return value;
+    }
+
+    fixLengthNumber(value) {
+        const num = Number(value);
+        value = num.toFixed(2);
+        value = Number(value);
+        return value;
     }
 
     openPaymentMethod(isFormValid) {
