@@ -481,8 +481,6 @@ interface PaymentListType {
             this.closeConfirmation = obj.closeConfirmation;
             this.amountLeft = Number(this.totalBill);
             this.itemSource = obj.itemSource;
-            this.itemList = obj.itemList;
-            this.netTotal = obj.netTotal;
             this.restriction = obj.restriction;
             this.customerID = obj.customerID;
             this.customerName = obj.customerName;
@@ -490,9 +488,6 @@ interface PaymentListType {
             this.dialogTilte =
                 obj.dialogTilte + " for Customer " + this.customerName;
 
-            this.employeeName = obj.employeeName;
-            this.storeName = obj.storeName;
-            this.storeAddress = obj.storeAddress;
         },
         discountAmount(newDiscount) {
             this.addDiscount();
@@ -503,7 +498,6 @@ interface PaymentListType {
 export default class PaymentScreen extends mixins(UtilityOptions) {
     private customerID;
     private methodList: IPaymentMethod[] = [];
-    private customerName;
     private accountNo = "";
     private cardType = {
         bankId: 0,
@@ -532,14 +526,9 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         tendered: 0,
         needlePoints: 0,
     };
-    private itemList = [];
-    private netTotal = 0;
 
     private paymentList: PaymentListType[] = [];
 
-    private employeeName = "";
-    private storeName = "";
-    private storeAddress = "";
 
     created() {
         this.paymentService = new PaymentService();
@@ -626,7 +615,7 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     }
 
     addDiscount(discountAmount) {
-        const total = this.netTotal;
+        const total = this.totalBill;
         this.amountLeft = total;
         const discount = this.amountLeft * (this.discountAmount / 100);
 
@@ -797,196 +786,10 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         }
     }
 
-    printReceipt() {
-        // Get the current date and time
-        const currentDate = new Date();
-        const options = {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
-            hour12: true, // To display time in 24-hour format
-        };
-        const formattedDate = currentDate.toLocaleDateString(
-            undefined,
-            options
-        );
 
-        console.log("paymentList", this.paymentList);
-
-        const randomDecimal = Math.random();
-        // Multiply the random decimal by 1000000 to get a number between 0 and 999999.999...
-        const randomNumber = randomDecimal * 1000000;
-        // Use Math.floor() to remove the decimal part and get a 6-digit number
-        const invoiceNumber = Math.floor(randomNumber);
-        const logoSrc =
-            require("@/assets/images/pharmacy-Receipt-logo.png").default;
-
-        // Define the content of the receipt that needs to be printed
-        const receiptContent = `<!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Tax Invoice - Pharmacy</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            margin: 0;
-                            padding: 0;
-                        }
-
-                        /* Invoice container styles */
-                        #invoice {
-                            width: 8cm;
-                            margin: 4cm auto; /* Add spacing from top and bottom */
-                            padding: 10px;
-                            border: 1px solid #ccc;
-                        }
-
-                        /* Header styles */
-                        #invoice .header {
-                            text-align: center;
-                            margin-bottom: 10px;
-                        }
-
-                        /* Customer details styles */
-                        #invoice .customer-details {
-                            margin-bottom: 10px;
-                        }
-
-                        /* Item table styles */
-                        #invoice .item-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
-
-                        #invoice .item-table th, #invoice .item-table td {
-                            border: 1px solid #ccc;
-                            padding: 5px;
-                            text-align: center;
-                        }
-
-                        /* Total section styles */
-                        #invoice .total {
-                            margin-top: 10px;
-                            text-align: right;
-                        }
-
-                        /* Footer styles */
-                        #invoice .footer {
-                            margin-top: 20px;
-                            text-align: center;
-                        }
-
-                        /* Logo styles */
-                        #logo {
-                            width: 100%;
-                            height: 4cm; /* Set the logo height to 4cm */
-                            display: block;
-                            margin-bottom: 10px;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div id="invoice">
-                        <img src="${logoSrc}" alt="Pharmacy Logo" id="logo">
-
-                        <div class="header">
-                            <h2>Tax Invoice</h2>
-                            <p>${this.storeName}</p>
-                            <p>${this.storeAddress}</p>
-                            <p>Phone: 06 537 9227</p>
-                        </div>
-
-                        <div class="customer-details">
-                            <p>Date: ${formattedDate}</p>
-                            <p>Invoice No.: ${invoiceNumber} </p>
-                            <p>Customer: ${this.customerName}</p>
-                            <p>Employee: ${this.employeeName}</p>
-                        </div>
-
-                        <!-- Item Table -->
-                        <table class="item-table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${this.itemList
-                                    .map(
-                                        (item) => `
-                                <tr>
-                                    <td>${item.productName}</td>
-                                    <td>${item.unit}</td>
-                                    <td>${item.sellingPrice} ${this.currency}</td>
-                                    <td>${item.subTotal} ${this.currency}</td>
-                                </tr>
-                                `
-                                    )
-                                    .join("")}
-                                <!-- You can add more products here -->
-                            </tbody>
-                        </table>
-
-                        <div class="total">
-                            <h4>Net Total: ${this.fixLength(
-                                this.totalBill
-                            )} </h4>
-                            ${this.paymentList
-                                .map(
-                                    (item) =>
-                                        `  <p>${item.paymentType} : ${
-                                            item.transTotalAmount +
-                                            " " +
-                                            this.currency
-                                        }</p>`
-                                )
-                                .join("")}
-                            <h3>Total: ${this.fixLength(
-                                this.totalPaymentsReceived
-                            )} ${this.currency}</h3>
-                            <p>Discount: ${this.discountAmount}%</p>
-                            <p>Balance Due: ${this.fixLength(
-                                this.paymentRounding
-                            )} ${this.currency}</p>
-                        </div>
-
-                        <div class="footer">
-                            <p>Thank you for your visit, have a nice day!</p>
-                            <br />
-                            <p>By: Smart Link</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                    `;
-
-        // Create a new hidden window and write the receipt content into it
-        const printWindow = window.open("", "_blank", "width=800,height=auto");
-        printWindow.document.open();
-        printWindow.document.write(receiptContent);
-        printWindow.document.close();
-
-        // Trigger the print dialog for the hidden window
-        setTimeout(() => {
-            printWindow.print();
-        }, 500);
-        // Close the hidden window after printing is done
-        //printWindow.close();
-    }
 
     printReceiptAndConfirm() {
         this.confirmPayments();
-
-        //this.printReceipt();
     }
 
     emitPayments() {

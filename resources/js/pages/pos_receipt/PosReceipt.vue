@@ -738,11 +738,6 @@
             customerID: this.item.profileID,
             customerName: this.state.selectedProfile,
             closeConfirmation: true,
-            itemList: this.savedItemList,
-            netTotal: this.netTotal,
-            employeeName: this.employeeName,
-            storeAddress: this.storeAddress,
-            storeName: this.storeName,
         }"
         v-on:closePaymentScreenEvent="closePaymentScreen"
         v-on:getProceededPaymentsEvent="getProceededPayments"
@@ -1377,11 +1372,9 @@ export default class PosReceipt extends Vue {
             .then((res) => {
                 console.log("Response Save Item: ", res);
                 this.receipt_no = res.receipt_no;
-                // TODO: -  Temporary Solution
-                //localStorage.setItem("myCat", "Tom");
 
-                // TODO:- Print Receipt
                 this.printReceipt();
+
                 if (res.alert == "info") {
                     this.clearAll();
                 }
@@ -1558,12 +1551,12 @@ export default class PosReceipt extends Vue {
                                 )
                                 .join("")}
                             <h3>Total: ${this.fixLength(total)} ${
-            this.currency
-        }</h3>
+                                this.currency
+                            }</h3>
                             <p>Discount: ${this.discount}%</p>
                             <p>Balance Due: ${this.fixLength(balanceDue)} ${
-            this.currency
-        }</p>
+                                this.currency
+                            }</p>
                         </div>
 
                         <div class="footer">
