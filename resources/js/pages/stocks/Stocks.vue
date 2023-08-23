@@ -23,6 +23,7 @@
                     <div class="p-mx-2">
                         <InputText
                             v-model.trim="keyword"
+                            @keyup.enter="loadSearchData"
                             placeholder="Product Name, Generic Name, Batch No"
                             style="width: 20rem"
                         />
@@ -89,7 +90,12 @@
                             {{ slotProps.data.batch_no }}
                         </template>
                     </Column>
-                    <Column header="Unit Qty">
+                    <Column header="UNITS">
+                        <template #body="slotProps">
+                            {{ slotProps.data.qty / slotProps.data.pack_size }}
+                        </template>
+                    </Column>
+                    <Column header="TOTAL UNITS">
                         <template #body="slotProps">
                             {{ slotProps.data.qty }}
                         </template>
@@ -913,6 +919,8 @@ export default class Stocks extends Vue {
         this.stockService
             .getStocks(this.keyword, this.selectedStore.id, page)
             .then((data) => {
+                console.log('sssss', data);
+
                 this.lists = data.records;
                 this.totalRecords = data.totalRecords;
                 this.limit = data.limit;

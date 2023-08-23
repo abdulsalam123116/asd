@@ -124,6 +124,12 @@
                                             </b>
                                         </small>
                                         <small>
+                                            Units :
+                                            <b class="pull-right">
+                                                {{ slotProps.item.qty / slotProps.item.pack_size }}
+                                            </b>
+                                        </small>
+                                        <small>
                                             Total Units :
                                             <b class="pull-right">
                                                 {{ slotProps.item.qty }}

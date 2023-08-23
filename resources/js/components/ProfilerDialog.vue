@@ -1,100 +1,110 @@
 <template>
-  <Dialog
-    v-model:visible="productDialog"
-    :style="{ width: '50vw' }"
-    :maximizable="true"
-    position="top"
-    class="p-fluid"
-    :modal="true"
-    :closable="true"
-    @hide="closeDialog"
-  >
-    <template #header>
-      <h5 class="p-dialog-titlebar p-dialog-titlebar-icon">
-        <i class="pi pi-check-circle"></i> {{ dialogTitle }}
-      </h5>
-    </template>
+    <Dialog
+        v-model:visible="productDialog"
+        :style="{ width: '50vw' }"
+        :maximizable="true"
+        position="top"
+        class="p-fluid"
+        :modal="true"
+        :closable="true"
+        @hide="closeDialog"
+    >
+        <template #header>
+            <h5 class="p-dialog-titlebar p-dialog-titlebar-icon">
+                <i class="pi pi-check-circle"></i> {{ dialogTitle }}
+            </h5>
+        </template>
 
-    <div class="p-field">
-      <label
-        for="accountTitle"
-        :class="{ 'p-error': v$.accountTitle.$invalid && submitted }"
-        >Account Title</label
-      >
-      <InputText
-        id="accountTitle"
-        v-model.trim="v$.accountTitle.$model"
-        :class="{ 'p-invalid': v$.accountTitle.$invalid && submitted }"
-        autoFocus
-      />
-      <small
-        v-if="
-          (v$.accountTitle.$invalid && submitted) ||
-          v$.accountTitle.$pending.$response
-        "
-        class="p-error"
-        >{{
-          v$.accountTitle.required.$message.replace("Value", "Account Title")
-        }}</small
-      >
-    </div>
-    <div class="p-field">
-      <label
-        for="contactNo"
-        :class="{ 'p-error': v$.contactNo.$invalid && submitted }"
-        >Contact No</label
-      >
-      <InputText
-        id="contactNo"
-        v-model.trim="v$.contactNo.$model"
-        :class="{ 'p-invalid': v$.contactNo.$invalid && submitted }"
-      />
-      <small
-        v-if="
-          (v$.contactNo.$invalid && submitted) ||
-          v$.contactNo.$pending.$response
-        "
-        class="p-error"
-        >{{
-          v$.contactNo.required.$message.replace("Value", "Contact No")
-        }}</small
-      >
-    </div>
-    <div class="p-field">
-      <label for="emailAddress">Email Address</label>
-      <InputText id="emailAddress" v-model.trim="item.emailAddress" aria-describedby="email-error" />
-    </div>
-    <div class="p-field">
-      <label for="nationalId">National ID</label>
-      <InputText id="nationalId" v-model.trim="item.nationalId" />
-    </div>
-    <div class="p-field">
-      <label for="address">Address</label>
-      <InputText id="address" v-model.trim="item.address" />
-    </div>
-    <div class="p-field">
-      <label for="accountType">Account Type</label>
-      <Dropdown
-        id="accountType"
-        v-model="item.accountType"
-        :options="profilerTypes"
-        optionLabel="key"
-      />
-    </div>
-    <div class="p-field">
-      <label for="description">Description</label>
-      <InputText id="description" v-model.trim="item.description" />
-    </div>
-    <template #footer v-if="!previewOnly">
-      <Button
-        type="submit"
-        label="Save"
-        icon="pi pi-check"
-        class="p-button-primary"
-        @click.prevent="saveItem(!v$.$invalid)"
-      />
-    </template>
-  </Dialog>
+        <div class="p-field">
+            <label
+                for="accountTitle"
+                :class="{ 'p-error': v$.accountTitle.$invalid && submitted }"
+                >Account Title</label
+            >
+            <InputText
+                id="accountTitle"
+                v-model="v$.accountTitle.$model"
+                :class="{ 'p-invalid': v$.accountTitle.$invalid && submitted }"
+                autoFocus
+            />
+            <small
+                v-if="
+                    (v$.accountTitle.$invalid && submitted) ||
+                    v$.accountTitle.$pending.$response
+                "
+                class="p-error"
+                >{{
+                    v$.accountTitle.required.$message.replace(
+                        "Value",
+                        "Account Title"
+                    )
+                }}</small
+            >
+        </div>
+        <div class="p-field">
+            <label
+                for="contactNo"
+                :class="{ 'p-error': v$.contactNo.$invalid && submitted }"
+                >Contact No</label
+            >
+            <InputText
+                id="contactNo"
+                v-model="v$.contactNo.$model"
+                :class="{ 'p-invalid': v$.contactNo.$invalid && submitted }"
+            />
+            <small
+                v-if="
+                    (v$.contactNo.$invalid && submitted) ||
+                    v$.contactNo.$pending.$response
+                "
+                class="p-error"
+                >{{
+                    v$.contactNo.required.$message.replace(
+                        "Value",
+                        "Contact No"
+                    )
+                }}</small
+            >
+        </div>
+        <div class="p-field">
+            <label for="emailAddress">Email Address</label>
+            <InputText
+                id="emailAddress"
+                v-model.trim="item.emailAddress"
+                aria-describedby="email-error"
+            />
+        </div>
+        <div class="p-field">
+            <label for="nationalId">National ID</label>
+            <InputText id="nationalId" v-model.trim="item.nationalId" />
+        </div>
+        <div class="p-field">
+            <label for="address">Address</label>
+            <InputText id="address" v-model.trim="item.address" />
+        </div>
+        <div class="p-field">
+            <label for="accountType">Account Type</label>
+            <Dropdown
+                id="accountType"
+                v-model="item.accountType"
+                :options="profilerTypes"
+                optionLabel="key"
+            />
+        </div>
+        <div class="p-field">
+            <label for="description">Description</label>
+            <InputText id="description" v-model.trim="item.description" />
+        </div>
+        <template #footer v-if="!previewOnly">
+            <Button
+                type="submit"
+                label="Save"
+                icon="pi pi-check"
+                class="p-button-primary"
+                @click.prevent="saveItem(!v$.$invalid)"
+            />
+        </template>
+    </Dialog>
 </template>
 
 <script lang="ts">
@@ -106,154 +116,167 @@ import useVuelidate from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 @Options({
-  props: {
-    profilerDetail: Object,
-  },
-  watch: {
-    profilerDetail(obj) {
-      if (obj.statusType == "New") {
-        this.previewOnly = false;
-        this.openDialog();
-      } 
-      else if (obj.statusType == "Update") {
-        this.previewOnly = false;
-        this.item.id = obj.profilerID;
-        this.editIem();
-      }
-      else if (obj.statusType == "Preview") {
-        this.previewOnly = true;
-        this.item.id = obj.profilerID;
-        this.editIem();
-      } 
-      else {
-        this.dialogTitle = "";
-      }
-      
-      this.dialogTitle = obj.dialogTitle;
-      this.productDialog = obj.status;
-      this.currentUserID = obj.currentUserID;
+    props: {
+        profilerDetail: Object,
     },
-  },
-  emits: ["updateProfilerStatus"],
+    watch: {
+        profilerDetail(obj) {
+            if (obj.statusType == "New") {
+                this.previewOnly = false;
+                this.openDialog();
+            } else if (obj.statusType == "Update") {
+                this.previewOnly = false;
+                this.item.id = obj.profilerID;
+                this.editIem();
+            } else if (obj.statusType == "Preview") {
+                this.previewOnly = true;
+                this.item.id = obj.profilerID;
+                this.editIem();
+            } else {
+                this.dialogTitle = "";
+            }
+
+            this.dialogTitle = obj.dialogTitle;
+            this.productDialog = obj.status;
+            this.currentUserID = obj.currentUserID;
+        },
+    },
+    emits: ["updateProfilerStatus"],
 })
 export default class ProfilerDialog extends Vue {
-  private toast;
-  private submitted = false;
-  private productDialog = false;
-  private previewOnly = false;
-  private dialogTitle = "";
-  private profilerService;
-  private currentUserID = 0;
+    private toast;
+    private submitted = false;
+    private productDialog = false;
+    private previewOnly = false;
+    private dialogTitle = "";
+    private profilerService;
+    private currentUserID = 0;
 
-  private item = {
-    id: 0,
-    emailAddress: "",
-    nationalId: "",
-    address: "",
-    description: "",
-    accountType: { key: "Customer" },
-    status: "Active",
-  };
-
-  private state = reactive({
-    accountTitle: "",
-    contactNo: "",
-  });
-
-  private validationRules = {
-    accountTitle: {
-      required,
-    },
-    contactNo: {
-      required,
-    },
-  };
-
-  private v$ = useVuelidate(this.validationRules, this.state);
-
-  private profilerTypes = [
-    { key: "Customer" },
-    { key: "Supplier" },
-    { key: "Salesman" },
-    { key: "Default Customer" },
-  ];
-
-  //DEFAULT METHOD OF TYPE SCRIPT
-  //CALLING WHENEVER COMPONENT LOADS
-  created() {
-    this.profilerService = new ProfilerService();
-    this.toast = new Toaster();
-  }
-
-  //OPEN DIALOG TO ADD NEW ITEM
-  openDialog() {
-    this.submitted = false;
-    this.productDialog = true;
-    this.clearItems();
-  }
-
-  clearItems() {
-    this.item = {
-      id: 0,
-      emailAddress: "",
-      nationalId: "",
-      address: "",
-      description: "",
-      accountType: { key: "Customer" },
-      status: "Active",
+    private item = {
+        id: 0,
+        emailAddress: "",
+        nationalId: "",
+        address: "",
+        description: "",
+        accountType: { key: "Customer" },
+        status: "Active",
     };
 
-    this.state.accountTitle = "";
-    this.state.contactNo = "";
-  }
-
-  closeDialog() {
-    this.$emit("updateProfilerStatus", ["",{}]);
-    this.productDialog = false;
-  }
-
-  //ADD OR UPDATE THE ITEM VIA HTTP
-  saveItem(isFormValid) {
-    this.submitted = true;
-    if (isFormValid) {
-      if (this.item.id != 0) {
-        this.profilerService.updateItem(this.item, this.state).then((res) => {
-          this.$emit("updateProfilerStatus", ["load",{}]);
-          //SHOW NOTIFICATION
-          this.toast.handleResponse(res);
-        });
-      } else {
-        this.profilerService
-          .saveItem(this.item, this.state, this.currentUserID)
-          .then((res) => {
-            this.$emit("updateProfilerStatus", ["load",res.profileDetail]);
-            //SHOW NOTIFICATION
-            this.toast.handleResponse(res);
-          });
-      }
-
-      this.productDialog = false;
-      this.clearItems();
-    }
-  }
-
-  //OPEN DIALOG BOX TO EDIT
-  editIem() {
-    this.submitted = false;
-    this.dialogTitle = "Update Profile";
-    this.productDialog = true;
-    this.profilerService.getItem(this.item).then((res) => {
-      if (res.length > 0) {
-        this.state.accountTitle   = res[0].account_title;
-        this.item.emailAddress    = res[0].email_address == null ? "" : res[0].email_address;
-        this.state.contactNo      = res[0].contact_no == null ? "" : res[0].contact_no;
-        this.item.nationalId      = res[0].national_id == null ? "" : res[0].national_id;
-        this.item.address         = res[0].address == null ? "" : res[0].address;
-        this.item.description     = res[0].description == null ? "" : res[0].description;
-        this.item.accountType.key = res[0].account_type;
-        this.item.status          = res[0].status;
-      }
+    private state = reactive({
+        accountTitle: "",
+        contactNo: "",
     });
-  }
+
+    private validationRules = {
+        accountTitle: {
+            required: (value) => {
+                // Allow empty strings or strings with only whitespace
+                return value.trim().length > 0 || value.length === 0;
+            },
+        },
+        contactNo: {
+            equired: (value) => {
+                // Allow empty strings or strings with only whitespace
+                return value.trim().length > 0 || value.length === 0;
+            },
+        },
+    };
+
+    private v$ = useVuelidate(this.validationRules, this.state);
+
+    private profilerTypes = [
+        { key: "Customer" },
+        { key: "Supplier" },
+        { key: "Salesman" },
+        { key: "Default Customer" },
+    ];
+
+    //DEFAULT METHOD OF TYPE SCRIPT
+    //CALLING WHENEVER COMPONENT LOADS
+    created() {
+        this.profilerService = new ProfilerService();
+        this.toast = new Toaster();
+    }
+
+    //OPEN DIALOG TO ADD NEW ITEM
+    openDialog() {
+        this.submitted = false;
+        this.productDialog = true;
+        this.clearItems();
+    }
+
+    clearItems() {
+        this.item = {
+            id: 0,
+            emailAddress: "",
+            nationalId: "",
+            address: "",
+            description: "",
+            accountType: { key: "Customer" },
+            status: "Active",
+        };
+
+        this.state.accountTitle = "";
+        this.state.contactNo = "";
+    }
+
+    closeDialog() {
+        this.$emit("updateProfilerStatus", ["", {}]);
+        this.productDialog = false;
+    }
+
+    //ADD OR UPDATE THE ITEM VIA HTTP
+    saveItem(isFormValid) {
+        this.submitted = true;
+        if (isFormValid) {
+            if (this.item.id != 0) {
+                this.profilerService
+                    .updateItem(this.item, this.state)
+                    .then((res) => {
+                        this.$emit("updateProfilerStatus", ["load", {}]);
+                        //SHOW NOTIFICATION
+                        this.toast.handleResponse(res);
+                    });
+            } else {
+                this.profilerService
+                    .saveItem(this.item, this.state, this.currentUserID)
+                    .then((res) => {
+                        this.$emit("updateProfilerStatus", [
+                            "load",
+                            res.profileDetail,
+                        ]);
+                        //SHOW NOTIFICATION
+                        this.toast.handleResponse(res);
+                    });
+            }
+
+            this.productDialog = false;
+            this.clearItems();
+        }
+    }
+
+    //OPEN DIALOG BOX TO EDIT
+    editIem() {
+        this.submitted = false;
+        this.dialogTitle = "Update Profile";
+        this.productDialog = true;
+        this.profilerService.getItem(this.item).then((res) => {
+            if (res.length > 0) {
+                this.state.accountTitle = res[0].account_title;
+                this.item.emailAddress =
+                    res[0].email_address == null ? "" : res[0].email_address;
+                this.state.contactNo =
+                    res[0].contact_no == null ? "" : res[0].contact_no;
+                this.item.nationalId =
+                    res[0].national_id == null ? "" : res[0].national_id;
+                this.item.address =
+                    res[0].address == null ? "" : res[0].address;
+                this.item.description =
+                    res[0].description == null ? "" : res[0].description;
+                this.item.accountType.key = res[0].account_type;
+                this.item.status = res[0].status;
+            }
+        });
+    }
 }
 </script>
