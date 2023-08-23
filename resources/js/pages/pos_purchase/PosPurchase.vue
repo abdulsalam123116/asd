@@ -31,12 +31,12 @@
             </div>
 
             <div class="p-mx-1">
-              <Button
+              <!-- <Button
                 icon="pi pi-plus"
                 label="New Profile"
                 class="p-button-success"
                 @click="openProfileDialog"
-              />
+              /> -->
             </div>
             <div class="p-mx-1">
               <Button
