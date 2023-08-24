@@ -480,7 +480,7 @@
                     <label
                         for="unitQty"
                         :class="{ 'p-error': v$.unitQty.$invalid && submitted }"
-                        >Unit</label
+                        >Units</label
                     >
                     <InputNumber
                         id="batchNo"
