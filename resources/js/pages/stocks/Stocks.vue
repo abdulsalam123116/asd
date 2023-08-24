@@ -480,7 +480,7 @@
                     <label
                         for="unitQty"
                         :class="{ 'p-error': v$.unitQty.$invalid && submitted }"
-                        >Unit Qty</label
+                        >Unit</label
                     >
                     <InputNumber
                         id="batchNo"
@@ -900,6 +900,8 @@ export default class Stocks extends Vue {
                 this.state.expiryDate = moment(this.state.expiryDate).format(
                     "YYYY-MM-DD"
                 );
+
+                this.state.unitQty = this.state.unitQty * this.state.packSize;
                 this.stockService
                     .updateItem(this.item, this.state)
                     .then((res) => {
@@ -919,7 +921,7 @@ export default class Stocks extends Vue {
         this.stockService
             .getStocks(this.keyword, this.selectedStore.id, page)
             .then((data) => {
-                console.log('sssss', data);
+                console.log("getStocks-data", data);
 
                 this.lists = data.records;
                 this.totalRecords = data.totalRecords;
@@ -1034,6 +1036,8 @@ export default class Stocks extends Vue {
         this.productDialog = true;
 
         this.stockService.getItem(data).then((res) => {
+            console.log('res-stockService.getItem', res);
+
             if (res != null) {
                 this.item.id = res.id;
                 this.item.packSelling = Number(res.sale_price);
@@ -1059,7 +1063,7 @@ export default class Stocks extends Vue {
                 this.state.brandSector = res.brand_sector;
                 this.state.category = res.category;
                 this.state.batchNo = res.batch_no;
-                this.state.unitQty = Number(res.qty);
+                this.state.unitQty = Number(res.qty / res.pack_size);
 
                 this.state.packPurchase = Number(res.purchase_price);
                 this.state.mRP = Number(res.mrp);

@@ -65,7 +65,7 @@ export default class StockService {
 			})
 	}
 
-	
+
     exportSampleStock()
     {
         const store = useStore();
@@ -136,7 +136,7 @@ export default class StockService {
 		formData.append('discount_percentage', stateObj.disc);
 		formData.append('min_stock', stateObj.minStock);
 		formData.append('item_location', stateObj.storeLocation);
-	
+
 		return instance()(
 			{
 				method: 'post',
