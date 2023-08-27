@@ -727,6 +727,7 @@ import Toaster from "../../helpers/Toaster";
 import moment from "moment";
 import { useStore, ActionTypes } from "../../store";
 import JsBarcode from "jsbarcode";
+import fontSrc from "@/assets/fonts/LibreBarcode39-Regular.ttf";
 
 @Options({
     title: "Stocks",
@@ -1036,7 +1037,7 @@ export default class Stocks extends Vue {
         this.productDialog = true;
 
         this.stockService.getItem(data).then((res) => {
-            console.log('res-stockService.getItem', res);
+            console.log("res-stockService.getItem", res);
 
             if (res != null) {
                 this.item.id = res.id;
@@ -1076,85 +1077,68 @@ export default class Stocks extends Vue {
     }
 
     // Method to print the barcode with text above
+    // https://pos.alhayatpharmacy.ae/fonts/LibreBarcode39-Regular.ttf
     printBarcode(data) {
-        console.log("barcode data", data);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-        // Get the canvas element using the ref
-        const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
-        const barcodeValue = data.batch_no; //+ data.expiry_date.replace(/-/g, "");
-        const expiryDate = data.expiry_date; //.replace(/-/g, "");
+    canvas.width = 400;
+    canvas.height = 150;
 
-        // Set the font and style for the text
-        const ctx = canvasElement.getContext("2d");
-        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Clear the canvas before drawing
-        ctx.font = "14px Poppins";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Load the barcode font using FontFace
+    const font = new FontFace("LibreBarcode39-Regular", "url(https://pos.alhayatpharmacy.ae/fonts/LibreBarcode39-Regular.ttf)");
+
+    font.load().then((loadedFont) => {
+        document.fonts.add(loadedFont);
+
+        // Continue with drawing once the font is loaded
+        ctx.font = `bold 16px LibreBarcode39-Regular`;
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
+        ctx.fillText(data.branch_name, canvas.width / 2, 30);
+        ctx.fillText(data.product_name, canvas.width / 2, 50);
 
-        // Add the words above the barcode
-        const words = [
-            data.branch_name,
-            data.product_name,
-            data.generic,
-            "Price: " +
-                data.sale_price +
-                " " +
-                localStorage.getItem("currency") ?? "AED",
-        ];
+        // Generate the barcode as font using JsBarcode
+        ctx.font = `50px LibreBarcode39-Regular`;
+        ctx.fillText(data.batch_no, canvas.width / 2, canvas.height / 2);
 
-        const canvasCenterX = canvasElement.width / 2;
-        const canvasCenterY = canvasElement.height / 2;
-        const barcodeHeight = 50; // Set the height of the barcode
-        const wordSpacing = 20;
-        const totalHeight = barcodeHeight + wordSpacing * words.length;
-        const startingY = canvasCenterY - totalHeight / 2;
-        for (let i = 0; i < words.length; i++) {
-            const wordX = canvasCenterX;
-            const wordY = startingY + i * wordSpacing;
-            ctx.fillText(words[i], wordX, wordY);
-        }
-
-        // Generate the barcode on the canvas below the words
-        JsBarcode(canvasElement, barcodeValue, {
-            format: "CODE128",
-            displayValue: true,
-            margin: 10,
-            fontSize: 10,
-            textPosition: "bottom",
-        });
+        // Draw the text below the barcode
+        const textBelowBarcode = `Price: ${data.sale_price} ${
+            localStorage.getItem("currency") ?? "AED"
+        } EXP: ${data.expiry_date}`;
+        ctx.fillText(textBelowBarcode, canvas.width / 2, canvas.height - 20);
 
         // Create a new window for printing
-
-        // Create an HTML string with the words and the barcode image
-        const htmlContent = `
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
-            <div style="text-align: left;">
-                <div  style="font-size: 21px; font-family: Arial, 'Poppins' ;font-weight: 500;">${
-                    words[0]
-                }</div>
-                <div style="font-size: 21px ; font-family: Arial, 'Poppins' ;font-weight: 500;">${
-                    words[1]
-                }</div>
-                <img src="${canvasElement.toDataURL()}" />
-
-                    <div style="font-size: 21px; font-family: Arial, 'Poppins' ; font-weight: 500;">${
-                        words[3]
-                    } &nbsp &nbsp EXP: ${expiryDate}</div>
-            </div>
-            `;
-
-        const printWindow = window.open("", "_blank", "width=400,height=150");
+        const printWindow = window.open(
+            "",
+            "_blank",
+            "width=400,height=150"
+        );
         printWindow.document.open();
-        printWindow.document.write(htmlContent);
+
+        // Embed the canvas content in the HTML content
+        const canvasImage = new Image();
+        canvasImage.src = canvas.toDataURL();
+
+        printWindow.document.write(`
+        <div style="text-align: center;">
+            <div>${data.branch_name}</div>
+            <div>${data.product_name}</div>
+            <div style="font-size: 50px; font-family: 'LibreBarcode39-Regular'">${data.batch_no}</div>
+            <div>${textBelowBarcode}</div>
+        </div>
+    `);
+
         printWindow.document.close();
 
         setTimeout(() => {
             printWindow.print();
         }, 500);
+    });
+}
 
-        // Close the window after printing
-        // printWindow.close();
-    }
 
     getPackSellingPrice(data) {
         const tax_1 = Number(this.item.tax_1);
