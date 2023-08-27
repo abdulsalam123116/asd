@@ -1036,7 +1036,7 @@ export default class Stocks extends Vue {
         this.productDialog = true;
 
         this.stockService.getItem(data).then((res) => {
-            console.log('res-stockService.getItem', res);
+            console.log("res-stockService.getItem", res);
 
             if (res != null) {
                 this.item.id = res.id;
@@ -1116,10 +1116,12 @@ export default class Stocks extends Vue {
 
         // Generate the barcode on the canvas below the words
         JsBarcode(canvasElement, barcodeValue, {
-            format: "PHARMACODE",
+            format: "CODE128",
+            width: 3,
+            height: 40,
             displayValue: true,
             margin: 10,
-            fontSize: 8,
+            fontSize: 12,
             textPosition: "bottom",
         });
 
