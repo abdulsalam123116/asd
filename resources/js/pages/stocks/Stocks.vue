@@ -1104,7 +1104,7 @@ export default class Stocks extends Vue {
 
         const canvasCenterX = canvasElement.width / 2;
         const canvasCenterY = canvasElement.height / 2;
-        const barcodeHeight = 50; // Set the height of the barcode
+        const barcodeHeight = 30; // Set the height of the barcode
         const wordSpacing = 20;
         const totalHeight = barcodeHeight + wordSpacing * words.length;
         const startingY = canvasCenterY - totalHeight / 2;
@@ -1116,10 +1116,10 @@ export default class Stocks extends Vue {
 
         // Generate the barcode on the canvas below the words
         JsBarcode(canvasElement, barcodeValue, {
-            format: "CODE128",
+            format: "PHARMACODE",
             displayValue: true,
             margin: 10,
-            fontSize: 10,
+            fontSize: 8,
             textPosition: "bottom",
         });
 
