@@ -1118,7 +1118,7 @@ export default class Stocks extends Vue {
         JsBarcode(canvasElement, barcodeValue, {
             format: "CODE128",
             width: 3,
-            height: 40,
+            height: 50,
             displayValue: true,
             margin: 10,
             fontSize: 12,
