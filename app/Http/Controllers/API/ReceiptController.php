@@ -604,7 +604,7 @@ class ReceiptController extends Controller
                     'amount' => $receiptPayment->trans_amount,
                     'description' => $receiptPayment->description,
                     'status' => 'Active', // Set accordingly
-                    'type' => 'INE', // Set accordingly
+                    'type' => $receiptPayment->source_type, // Set accordingly
                     'entity' => 'No', // Set accordingly
                     'branch_id' => $receiptPayment->branch_id,
                     'created_by' => $receiptPayment->created_by,
