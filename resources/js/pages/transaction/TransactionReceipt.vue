@@ -70,12 +70,12 @@
                 </Column>
                 <Column header="Total Amount">
                     <template #body="slotProps">
-                        {{currency}} {{ slotProps.data.total_bill }}
+                        {{ currency }} {{ slotProps.data.total_bill }}
                     </template>
                 </Column>
                 <Column header="Balance">
                     <template #body="slotProps">
-                         {{currency}} 
+                        {{ currency }}
                         {{
                             formatAmount(
                                 calculateBalance(
@@ -124,9 +124,9 @@
                             @click="voidReceipt()"
                             v-if="
                                 itemFilter.type != 'ASR' &&
-                                    item.status == 'Active' &&
-                                    selectedReceiptData.paymentTransactions
-                                        .length == 0
+                                item.status == 'Active' &&
+                                selectedReceiptData.paymentTransactions
+                                    .length == 0
                             "
                             label="VOID RECEIPT"
                             class="p-button-danger p-button-md p-mx-2"
@@ -135,7 +135,7 @@
                             icon="pi pi-money-bill"
                             v-if="
                                 itemFilter.type != 'ASR' &&
-                                    totalBalanceReceipt > 0.02
+                                totalBalanceReceipt > 0.02
                             "
                             label="PAY/RECEIVE PAYMENT"
                             @click="openPaymentScreen()"
@@ -158,7 +158,7 @@
                             @click="saveStock()"
                             v-if="
                                 itemFilter.type == 'ASR' &&
-                                    item.status == 'Stock Left'
+                                item.status == 'Stock Left'
                             "
                             icon="pi pi-check-circle"
                             label="SAVE STOCK"
@@ -200,17 +200,52 @@
                     <Column field="paymentType" header="Payment Type"></Column>
                     <Column header="Total Amount">
                         <template #body="slotProps">
-                             {{currency}}
+                            {{ currency }}
                             {{ formatAmount(slotProps.data.transTotalAmount) }}
                         </template>
                     </Column>
                     <Column field="description" header="Description"></Column>
+                    <Column header="Action">
+                        <template #body="slotProps">
+                            <Button
+                                icon="pi pi-pencil"
+                                class="p-button-primary"
+                                @click="
+                                    openEditPaymentHistoryDialog(slotProps.data)
+                                "
+                            >
+                            </Button>
+                            <!-- {{ slotProps.data }} -->
+                        </template>
+                    </Column>
                 </DataTable>
             </Dialog>
+
+            <Dialog
+                :style="{ width: '25vw' }"
+                v-model:visible="paymentHistoryDialog"
+                position="top"
+            >
+                <!-- {{ this.selectedPaymentHistoryData }} -->
+                <Button
+                    v-if="selectedPaymentHistoryData.paymentType != 'Cash'"
+                    class="p-button-warning"
+                    @click="changePaymentToCash(selectedPaymentHistoryData)"
+                    ><i class="pi pi-money-bill"> Change to Cash</i>
+                </Button>
+                <Button
+                    v-if="selectedPaymentHistoryData.paymentType == 'Cash'"
+                    class="p-button-warning"
+                    @click="changePaymentToBank(selectedPaymentHistoryData)"
+                >
+                    <i class="pi pi-wallet"> Change to Bank</i>
+                </Button>
+            </Dialog>
+
             <SearchFilter
                 :searchDetail="{
                     status: this.filterDialog,
-                    dialogTitle: this.dialogTitle
+                    dialogTitle: this.dialogTitle,
                 }"
                 v-on:updateFilterStatus="updateFilterStatus"
             />
@@ -220,7 +255,7 @@
                     status: this.previewPosReceipt,
                     dialogTitle: this.dialogTitle,
                     previewHeading: this.previewHeading,
-                    receiptID: this.receiptID
+                    receiptID: this.receiptID,
                 }"
                 v-on:updatePreviewStatus="updatePreviewStatus"
             />
@@ -233,7 +268,7 @@
                     dialogTilte: dialogTitle,
                     customerID: this.item.profileID,
                     customerName: this.item.selectedProfile,
-                    closeConfirmation: true
+                    closeConfirmation: true,
                 }"
                 v-on:closePaymentScreenEvent="closePaymentScreen"
                 v-on:getProceededPaymentsEvent="getProceededPayments"
@@ -278,21 +313,22 @@ interface PaymentListType {
 }
 
 @Options({
-    title: 'Transactions',
+    title: "Transactions",
     components: {
         PaymentScreen,
         AutoComplete,
         SearchFilter,
-        PosPreviewReceipt
-    }
+        PosPreviewReceipt,
+    },
 })
 export default class TransactionReceipt extends mixins(UtilityOptions) {
     private lists = [];
 
     private selectedReceiptData = {
-        paymentTransactions: []
+        paymentTransactions: [],
     };
 
+    private selectedPaymentHistoryData = {};
     private profilerList = [];
     private accountHeadList = [];
     private totalAmountStatement = "Total Amount Received";
@@ -309,6 +345,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     private profilerService;
     private chartService;
     private previewTransactionDialog = false;
+    private paymentHistoryDialog = false;
     private previewPosReceipt = false;
     private productDialog = false;
     private filterDialog = false;
@@ -326,8 +363,8 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
             accountID: 0,
             accountHead: "",
             amount: 0,
-            type: "Debit"
-        }
+            type: "Debit",
+        },
     ];
 
     private receiptTypes = [
@@ -336,7 +373,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
         { key: "Transfer Stocks", value: "TRN" },
         { key: "Arrived Stocks", value: "ASR" },
         { key: "Purchase Stocks", value: "PUR" },
-        { key: "Purchase Return", value: "RPU" }
+        { key: "Purchase Return", value: "RPU" },
     ];
 
     private itemFilter = {
@@ -345,7 +382,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
         storeID: 0,
         date1: "",
         date2: "",
-        type: "INE"
+        type: "INE",
     };
 
     private paymentList: PaymentListType[] = [];
@@ -355,7 +392,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
         profileID: 0,
         selectedProfile: "",
         type: "",
-        status: ""
+        status: "",
     };
 
     //CALLING WHEN PAGINATION BUTTON CLICKS
@@ -385,7 +422,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     loadList(page) {
         this.receiptService
             .transactionList(this.itemFilter, page)
-            .then(data => {
+            .then((data) => {
                 this.lists = data.records;
                 this.totalRecords = data.totalRecords;
                 this.limit = data.limit;
@@ -416,7 +453,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
 
     calculateBalance(totalBill, receiptBalance) {
         let totalAmount = 0;
-        receiptBalance.forEach(e => {
+        receiptBalance.forEach((e) => {
             totalAmount = totalAmount + Number(e.trans_total_amount);
         });
         return Number(totalBill - totalAmount);
@@ -425,6 +462,13 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     openTransactionDialog() {
         this.previewTransactionDialog = true;
         this.menuBar = false;
+    }
+
+    openEditPaymentHistoryDialog(data) {
+        console.log("payment history data", data);
+        this.selectedPaymentHistoryData = data;
+        this.paymentHistoryDialog = true;
+        //this.menuBar = false;
     }
 
     openPaymentScreen() {
@@ -473,7 +517,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
 
         this.receiptService
             .savePayment(this.item, this.paymentList, this.counterEntry)
-            .then(res => {
+            .then((res) => {
                 if (res.alert == "info") {
                     this.loadList(this.goToFirstLink);
                     this.clearAll();
@@ -487,7 +531,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     }
 
     stockLeft() {
-        this.receiptService.stockLeft(this.item).then(res => {
+        this.receiptService.stockLeft(this.item).then((res) => {
             if (res.alert == "info") {
                 this.loadList(this.goToFirstLink);
                 this.clearAll();
@@ -500,7 +544,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     }
 
     saveStock() {
-        this.receiptService.saveStock(this.item).then(res => {
+        this.receiptService.saveStock(this.item).then((res) => {
             if (res.alert == "info") {
                 this.loadList(this.goToFirstLink);
                 this.clearAll();
@@ -526,7 +570,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
         return method;
     }
     voidReceipt() {
-        this.receiptService.voidStock(this.item).then(res => {
+        this.receiptService.voidStock(this.item).then((res) => {
             if (res.alert == "info") {
                 this.loadList(this.goToFirstLink);
                 this.clearAll();
@@ -546,7 +590,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
             profileID: 0,
             selectedProfile: "",
             type: "",
-            status: ""
+            status: "",
         };
     }
 
@@ -563,7 +607,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     get totalPaidCash() {
         let total = 0;
 
-        this.paymentList.forEach(e => {
+        this.paymentList.forEach((e) => {
             if (e.paymentType == "Cash") {
                 total = total + e.transTotalAmount;
             }
@@ -575,7 +619,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     get totalPaidBank() {
         let total = 0;
 
-        this.paymentList.forEach(e => {
+        this.paymentList.forEach((e) => {
             if (e.paymentType != "Cash") {
                 total = total + e.transTotalAmount;
             }
@@ -600,7 +644,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
                         accountID: 2,
                         accountHead: "Cash in hand",
                         amount: this.totalPaidCash,
-                        type: "Debit"
+                        type: "Debit",
                     });
                 }
 
@@ -609,7 +653,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
                         accountID: 8,
                         accountHead: "Cash at bank",
                         amount: this.totalPaidBank,
-                        type: "Debit"
+                        type: "Debit",
                     });
                 }
 
@@ -617,14 +661,14 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
                     accountID: 4,
                     accountHead: "Accounts receivable",
                     amount: totalPaid,
-                    type: "Credit"
+                    type: "Credit",
                 });
             } else if (this.item.type == "RFD" || this.item.type == "PUR") {
                 this.counterEntry.push({
                     accountID: 5,
                     accountHead: "Accounts payable",
                     amount: totalPaid,
-                    type: "Debit"
+                    type: "Debit",
                 });
 
                 if (this.totalPaidCash > 0) {
@@ -632,7 +676,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
                         accountID: 2,
                         accountHead: "Cash in hand",
                         amount: this.totalPaidCash,
-                        type: "Credit"
+                        type: "Credit",
                     });
                 }
 
@@ -641,7 +685,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
                         accountID: 8,
                         accountHead: "Cash at bank",
                         amount: this.totalPaidBank,
-                        type: "Credit"
+                        type: "Credit",
                     });
                 }
             } else {
@@ -652,6 +696,73 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
 
     get currency() {
         return this.store.getters.getCurrency;
+    }
+
+    changePaymentToCash(data) {
+        console.log("changePaymentToCash called ...", data);
+
+        const payment_type = "Cash";
+        const account_no = "";
+
+        this.receiptService
+            .updatePaymentType(data.id, payment_type, account_no)
+            .then((res) => {
+                console.log("changePaymentTo *Cash* response", res);
+                console.log("this.goToFirstLink", this.goToFirstLink);
+                console.log("message", res.message);
+
+                if (res.alert == "info") {
+                    this.loadList(this.goToFirstLink);
+                    this.clearAll();
+                }
+                res.msg = res.message;
+                this.toast.handleResponse(res);
+
+                this.paymentHistoryDialog = false;
+
+                var paymentItem =
+                    this.selectedReceiptData.paymentTransactions.find(
+                        (item) =>
+                            item["id"] === this.selectedPaymentHistoryData["id"]
+                    );
+                paymentItem["paymentType"] = payment_type;
+                paymentItem["accountNo"] = account_no;
+            });
+    }
+    changePaymentToBank(data) {
+        console.log("changePaymentToBank called ...", data);
+        const payment_type = "Visa Card";
+        const account_no = "1234";
+
+        this.receiptService
+            .updatePaymentType(data.id, payment_type, account_no)
+            .then((res) => {
+                console.log("changePaymentTo *Bank* response", res);
+                console.log("this.goToFirstLink", this.goToFirstLink);
+                console.log("message", res.message);
+
+                // if (res.alert == "info") {
+                //     this.loadList(this.goToFirstLink);
+                //     this.clearAll();
+                // }
+
+                if (res.alert == "info") {
+                    this.loadList(this.goToFirstLink);
+                    this.clearAll();
+                }
+                res.msg = res.message;
+                this.toast.handleResponse(res);
+
+                this.paymentHistoryDialog = false;
+
+                var paymentItem =
+                    this.selectedReceiptData.paymentTransactions.find(
+                        (item) =>
+                            item["id"] === this.selectedPaymentHistoryData["id"]
+                    );
+                paymentItem["paymentType"] = payment_type;
+                paymentItem["accountNo"] = account_no;
+            });
     }
 }
 </script>

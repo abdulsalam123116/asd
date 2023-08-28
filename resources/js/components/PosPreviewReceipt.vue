@@ -25,10 +25,10 @@
 				<div>
 						<img  class="company-logo" :src="getCompanyURL()" alt="Company Logo" />
 				</div>
-			</div>  
-			<h3 class="p-mb-2 p-mt-1 p-text-bold p-text-uppercase" style="color:#004C97">{{receiptTypeName}}</h3> 
+			</div>
+			<h3 class="p-mb-2 p-mt-1 p-text-bold p-text-uppercase" style="color:#004C97">{{receiptTypeName}}</h3>
 			<div class="p-grid">
-				<div class="p-col"> 
+				<div class="p-col">
 					<span class="p-mr-2 p-text-uppercase ">  <b> To : </b> {{items.selectedProfile}}</span>
 					<span class="p-mx-2 p-text-uppercase ">  <b> Receipt NO : </b> {{items.receiptNo}} </span>
 					<span class="p-mx-2 p-text-uppercase ">  <b> Receipt DATE : </b> {{formatDate(items.receiptDate)}} / {{formatTime(items.createdDate)}} </span>
@@ -39,7 +39,7 @@
 			</div>
 			<div class="p-grid">
 				<div class="p-col">
-						<DataTable :value="itemList"  
+						<DataTable :value="itemList"
 							class="p-datatable-sm p-datatable-gridlines"
 							responsiveLayout="scroll"
 						>
@@ -103,7 +103,7 @@
 										}} %
 									</template>
 								</Column>
-								
+
 								<Column style="width: 5%" class="p-p-1" v-if="items.type == 'PUR' || items.type == 'RPU'" header="MFG DISC">
 									<template #body="slotProps">
 										{{
@@ -147,6 +147,12 @@
 												slotProps.data.subTotal
 											)
 										}}
+									</template>
+								</Column>
+                                <Column style="width: 6%" class="p-p-1"  header="Action">
+									<template #body="slotProps">
+										{{	slotProps.data }}
+                                        <button class="button button-primary"><i class="fa fa-barcode"></i> Print Barcode</button>
 									</template>
 								</Column>
 						</DataTable>
@@ -241,11 +247,11 @@ import { useStore, ActionTypes } from "../store";
 	},
 	watch: {
 		PreviewReceipt(obj) {
-			
+
 			this.openDialog();
 
 			this.productDialog = obj.status;
-		 
+
 			if(obj.receiptID != 0)
 			{
 				this.loadReceipt(obj.receiptID);
@@ -277,7 +283,7 @@ export default class PosPreviewReceipt extends Vue {
 			{header: 'Strip Size'},
 			{header: 'Cus Disc'},
 	];
-	
+
 	private optionalListOptionsTaxes = [
 			{header: 'Mode'},
 			{header: 'Batch NO'},
@@ -359,7 +365,7 @@ export default class PosPreviewReceipt extends Vue {
 	mounted()
 	{
 		const localList =  localStorage.getItem('optionalList');
-		
+
 		if(localList != null)
 		{
 			const parsedList = JSON.parse(localList);
@@ -377,7 +383,7 @@ export default class PosPreviewReceipt extends Vue {
 		this.productDialog = false;
 	}
 
-	getCompanyURL() 
+	getCompanyURL()
 	{
 		return  require('@/assets/images/logo.png').default;
 	}
@@ -391,7 +397,7 @@ export default class PosPreviewReceipt extends Vue {
 				{
 					this.transferStoreName = res.tStoreDetails.transfer_branch.name;
 				}
-		 
+
 				this.items.storeName         = res.storeDetail.name;
 				this.items.storeAddress      = res.storeDetail.address;
 				this.items.storeEmail        = res.storeDetail.email;
@@ -422,13 +428,13 @@ export default class PosPreviewReceipt extends Vue {
 				this.items.totalTendered      =  Number(res.receipt.total_tendered);
 
 				let vList = res.receiptList;
-			 
+
 				if(vList.length > 0)
 				{
 					this.itemList = [];
 
 					vList.map(v => {
-					 
+
 						this.itemList.push({
 							batchNo: v.batch_no,
 							brandName: v.brand_name,
@@ -461,7 +467,7 @@ export default class PosPreviewReceipt extends Vue {
 				});
 
 				}
-				
+
 					//taxNames
 					this.taxNames = [];
 
@@ -508,7 +514,7 @@ export default class PosPreviewReceipt extends Vue {
 
 					if(this.taxNames[0].show)
 					{
-						
+
 						this.optionalListOptionsTaxes.push({header: this.taxNames[0].taxName});
 					}
 
@@ -534,12 +540,12 @@ export default class PosPreviewReceipt extends Vue {
 	{
 		return moment(date).format("DD-MM-YYYY");
 	}
-	
+
 	expiryDate(date)
 	{
 		return moment(date).format("MMM-YYYY");
 	}
-	
+
 	formatTime(date)
 	{
 		return moment(date).format("hh:mm A");
@@ -609,7 +615,7 @@ export default class PosPreviewReceipt extends Vue {
 		{
 			title = 'INVALID';
 		}
-		
+
 		return title;
 	}
 

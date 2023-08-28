@@ -35,5 +35,6 @@ class ReceiptPayment extends Model
         'receipt_no',
         'created_by',
         'branch_id',
+        'updated_at'
     ];
 }
