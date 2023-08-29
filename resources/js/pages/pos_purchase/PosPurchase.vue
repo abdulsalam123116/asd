@@ -945,6 +945,8 @@ export default class PosPurchase extends Vue {
   clearListItem(item) {
     this.savedItemList.splice(this.savedItemList.indexOf(item), 1);
     this.toast.showSuccess("Item Deleted Successfully");
+    localStorage.setItem("purchase_savedItemList", JSON.stringify(this.savedItemList));
+
   }
 
   limitString(str) {
