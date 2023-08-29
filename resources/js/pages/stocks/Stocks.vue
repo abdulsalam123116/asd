@@ -1150,12 +1150,19 @@ export default class Stocks extends Vue {
         printWindow.document.write(htmlContent);
         printWindow.document.close();
 
-        setTimeout(() => {
-            printWindow.print();
-        }, 500);
+        // setTimeout(() => {
+            printWindow.onload = () => {
+                printWindow.print();
+                console.log("Please click the 'Print' button in the print dialog.");
+
+            };
+        // }, 500);
 
         // Close the window after printing
-        // printWindow.close();
+        // Detect when printing is done
+        printWindow.addEventListener("afterprint", () => {
+            printWindow.close();
+        });
     }
 
     getPackSellingPrice(data) {

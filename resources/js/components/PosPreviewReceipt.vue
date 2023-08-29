@@ -847,12 +847,23 @@ export default class PosPreviewReceipt extends Vue {
         printWindow.document.write(htmlContent);
         printWindow.document.close();
 
+        const numCopies = 3; // Change this to the number of copies you want
+        let copiesPrinted = 0;
+
         setTimeout(() => {
-            printWindow.print();
+            for (let i = 0; i < numCopies; i++) {
+                printWindow.print();
+            }
         }, 500);
 
-        // Close the window after printing
-        // printWindow.close();
+        // Detect when printing is done
+        printWindow.addEventListener("afterprint", () => {
+            copiesPrinted++;
+
+            if (copiesPrinted === numCopies) {
+                printWindow.close();
+            }
+        });
     }
 }
 </script>
