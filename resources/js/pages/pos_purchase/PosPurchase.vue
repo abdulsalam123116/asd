@@ -17,6 +17,8 @@
                 {{ storeName }}
               </b>
             </h5>
+            <Badge v-if="onHoldStatus" class="ml-5" value="On Hold" size="large" severity="warning"></Badge>
+
           </template>
           <template #end>
             <div class="p-mx-1">
@@ -590,6 +592,7 @@ export default class PosPurchase extends Vue {
   private profilerList = [];
   private itemList = [];
   private store = useStore();
+  private onHoldStatus = false;
 
   private taxNames = [
     {
@@ -662,6 +665,12 @@ export default class PosPurchase extends Vue {
     this.profilerService = new ProfilerService();
     this.posService = new PosService();
     this.toast = new Toaster();
+
+    var savedItemListLocalStorage = JSON.parse(localStorage.getItem("purchase_savedItemList") || "[]");
+    if (savedItemListLocalStorage.length > 0)
+        this.onHoldStatus = true
+    this.savedItemList = savedItemListLocalStorage ?? [];
+
   }
 
   mounted() {
@@ -730,6 +739,7 @@ export default class PosPurchase extends Vue {
       subTotal: 0,
     });
 
+    localStorage.setItem("purchase_savedItemList", JSON.stringify(this.savedItemList));
     this.itemScanBox = "";
   }
 
@@ -897,6 +907,8 @@ export default class PosPurchase extends Vue {
   }
 
   clearAll() {
+    localStorage.removeItem('purchase_savedItemList')
+    this.onHoldStatus = false;
 
     this.savedItemList = [];
     this.paymentList = [];

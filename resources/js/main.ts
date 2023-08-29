@@ -44,6 +44,7 @@ import Sidebar from 'primevue/sidebar';
 import Divider from 'primevue/divider';
 import Panel from 'primevue/panel';
 import Card from 'primevue/card';
+import Badge from 'primevue/badge';
 import VueBarcode from '@chenfengyuan/vue-barcode';
 import Vuelidate from 'vuelidate';
 
@@ -79,6 +80,7 @@ app.use(PrimeVue,{ripple: true});
 app.component('Toast',Toast)
 app.component('Panel',Panel)
 app.component('Card',Card)
+app.component('Badge',Badge)
 app.component('VueBarcode',VueBarcode);
 app.component('Menubar',Menubar)
 app.component('Textarea',Textarea)
