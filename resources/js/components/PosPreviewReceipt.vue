@@ -847,7 +847,7 @@ export default class PosPreviewReceipt extends Vue {
         printWindow.document.write(htmlContent);
         printWindow.document.close();
 
-        const numCopies = 3; // Change this to the number of copies you want
+        const numCopies = data.unit; // Change this to the number of copies you want
         let copiesPrinted = 0;
 
         setTimeout(() => {
