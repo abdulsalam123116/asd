@@ -151,8 +151,17 @@
 								</Column>
                                 <Column style="width: 6%" class="p-p-1"  header="Action">
 									<template #body="slotProps">
-										{{	slotProps.data }}
-                                        <button class="button button-primary"><i class="fa fa-barcode"></i> Print Barcode</button>
+                                        <!-- Create a hidden canvas element for barcode rendering -->
+                                        <canvas
+                                            ref="barcodeCanvas"
+                                            style="display: none"
+                                        ></canvas>
+                                        <Button
+                                            icon="pi pi-print"
+                                            label="Print Barcode"
+                                            class="p-button-rounded p-button-info"
+                                            @click="printBarcode(slotProps.data)"
+                                        />
 									</template>
 								</Column>
 						</DataTable>
@@ -208,6 +217,7 @@ import { Options, Vue } from "vue-class-component";
 import Toaster from "../helpers/Toaster";
 import PosService from "../service/PosService.js";
 import { useStore, ActionTypes } from "../store";
+import JsBarcode from "jsbarcode";
 
 
  interface itemList{
@@ -633,6 +643,89 @@ export default class PosPreviewReceipt extends Vue {
 	get currency() {
 		return this.store.getters.getCurrency;
 	}
+
+    printBarcode(data) {
+        console.log("barcode data", data);
+
+        // Get the canvas element using the ref
+        const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
+        const barcodeValue = data.batchNo; //+ data.expiry_date.replace(/-/g, "");
+        const expiryDate = data.expiryDate; //.replace(/-/g, "");
+
+        // Set the font and style for the text
+        const ctx = canvasElement.getContext("2d");
+        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height); // Clear the canvas before drawing
+        ctx.font = "14px Poppins";
+        ctx.fillStyle = "#000";
+        ctx.textAlign = "center";
+
+        // Add the words above the barcode
+        const words = [
+        this.items.storeName  ,
+            data.genericName,
+            data.generic,
+            "Price: " +
+                data.sellingPrice +
+                " " +
+                localStorage.getItem("currency") ?? "AED",
+        ];
+console.log('words',words);
+
+        const canvasCenterX = canvasElement.width / 2;
+        const canvasCenterY = canvasElement.height / 2;
+        const barcodeHeight = 30; // Set the height of the barcode
+        const wordSpacing = 20;
+        const totalHeight = barcodeHeight + wordSpacing * words.length;
+        const startingY = canvasCenterY - totalHeight / 2;
+        for (let i = 0; i < words.length; i++) {
+            const wordX = canvasCenterX;
+            const wordY = startingY + i * wordSpacing;
+            ctx.fillText(words[i], wordX, wordY);
+        }
+
+        // Generate the barcode on the canvas below the words
+        JsBarcode(canvasElement, barcodeValue, {
+            format: "CODE128",
+            width: 3,
+            height: 50,
+            displayValue: true,
+            margin: 10,
+            fontSize: 12,
+            textPosition: "bottom",
+        });
+
+        // Create a new window for printing
+
+        // Create an HTML string with the words and the barcode image
+        const htmlContent = `
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
+            <div style="text-align: left;">
+                <div  style="font-size: 21px; font-family: Arial, 'Poppins' ;font-weight: 500;">${
+                    words[0]
+                }</div>
+                <div style="font-size: 21px ; font-family: Arial, 'Poppins' ;font-weight: 500;">${
+                    words[1]
+                }</div>
+                <img src="${canvasElement.toDataURL()}" />
+
+                    <div style="font-size: 21px; font-family: Arial, 'Poppins' ; font-weight: 500;">${
+                        words[3]
+                    } &nbsp &nbsp EXP: ${expiryDate}</div>
+            </div>
+            `;
+
+        const printWindow = window.open("", "_blank", "width=400,height=150");
+        printWindow.document.open();
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
+
+        // Close the window after printing
+        // printWindow.close();
+    }
 }
 </script>
 
