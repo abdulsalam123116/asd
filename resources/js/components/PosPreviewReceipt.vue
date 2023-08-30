@@ -815,22 +815,22 @@ export default class PosPreviewReceipt extends Vue {
         JsBarcode(canvasElement, barcodeValue, {
             format: "CODE128",
             width: 3,
-            height: 50,
+            height: 75,
             displayValue: true,
-            margin: 10,
-            fontSize: 12,
+            margin: 12,
+            fontSize: 16,
             textPosition: "bottom",
         });
 
         // Create a new window for printing
 
-        const printWidth = 752;
-        const printHeight = 304;
+        const printWidth = 10;
+        const printHeight = 5;
 
         // Create an HTML string with the words and the barcode image
         const htmlContent = `
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
-            <div style="text-align: left; width: ${printWidth}px; height: ${printHeight}px; overflow: hidden;">
+            <div style="text-align: left;  ">
                 <div  style="font-size: 21px; font-family: Arial, 'Poppins' ;font-weight: 500;">${
                     words[0]
                 }</div>
@@ -846,8 +846,23 @@ export default class PosPreviewReceipt extends Vue {
             `;
 
         const printWindow = window.open("", "_blank", "width=700,height=700");
-        printWindow.document.open();
-        printWindow.document.write(htmlContent);
+        // Set CSS styles on the print window's content
+        printWindow.document.write(`
+            <style>
+                @page {
+                    size: ${printWidth}px ${printHeight}px;
+                    margin: 0;
+                }
+                body {
+                    width: ${printWidth}cm;
+                    height: ${printHeight}cm;
+                    margin: 24px;
+                    padding: 0;
+                }
+            </style>
+            ${htmlContent}
+        `);
+        //printWindow.document.write(htmlContent);
         printWindow.document.close();
 
         //const numCopies = data.unit; // Change this to the number of copies you want
@@ -862,7 +877,6 @@ export default class PosPreviewReceipt extends Vue {
         // Detect when printing is done
         printWindow.addEventListener("afterprint", () => {
             //  copiesPrinted++;
-
             // if (copiesPrinted === numCopies) {
             // printWindow.close();
             //  }
