@@ -824,8 +824,8 @@ export default class PosPreviewReceipt extends Vue {
 
         // Create a new window for printing
 
-        const printWidth = 376;
-        const printHeight = 152;
+        const printWidth = 752;
+        const printHeight = 304;
 
         // Create an HTML string with the words and the barcode image
         const htmlContent = `
@@ -864,7 +864,7 @@ export default class PosPreviewReceipt extends Vue {
             //  copiesPrinted++;
 
             // if (copiesPrinted === numCopies) {
-            printWindow.close();
+            // printWindow.close();
             //  }
         });
     }
