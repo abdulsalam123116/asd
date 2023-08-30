@@ -824,10 +824,13 @@ export default class PosPreviewReceipt extends Vue {
 
         // Create a new window for printing
 
+        const printWidth = 376;
+        const printHeight = 152;
+
         // Create an HTML string with the words and the barcode image
         const htmlContent = `
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
-            <div style="text-align: left;">
+            <div style="text-align: left; width: ${printWidth}px; height: ${printHeight}px; overflow: hidden;">
                 <div  style="font-size: 21px; font-family: Arial, 'Poppins' ;font-weight: 500;">${
                     words[0]
                 }</div>
@@ -842,7 +845,7 @@ export default class PosPreviewReceipt extends Vue {
             </div>
             `;
 
-        const printWindow = window.open("", "_blank", "width=200,height=75");
+        const printWindow = window.open("", "_blank", "width=700,height=700");
         printWindow.document.open();
         printWindow.document.write(htmlContent);
         printWindow.document.close();
