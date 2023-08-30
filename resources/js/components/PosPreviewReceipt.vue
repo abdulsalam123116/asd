@@ -791,7 +791,7 @@ export default class PosPreviewReceipt extends Vue {
         // Add the words above the barcode
         const words = [
             this.items.storeName,
-            data.genericName,
+            data.itemName,
             data.generic,
             "Price: " +
                 data.sellingPrice +
@@ -842,7 +842,7 @@ export default class PosPreviewReceipt extends Vue {
             </div>
             `;
 
-        const printWindow = window.open("", "_blank", "width=400,height=150");
+        const printWindow = window.open("", "_blank", "width=200,height=75");
         printWindow.document.open();
         printWindow.document.write(htmlContent);
         printWindow.document.close();
