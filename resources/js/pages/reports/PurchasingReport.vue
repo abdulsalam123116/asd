@@ -94,7 +94,7 @@
               {{ slotProps.data.supplierBonus }}x
             </template>
           </Column>
-        
+
           <Column  header="Total Units" field="totalUnit">
             <template #body="slotProps">
               {{ slotProps.data.totalUnit }}x
@@ -272,8 +272,8 @@
              </div>
           </div>
         </div>
-        
-        
+
+
         <div class="p-field">
             <label for="filterStore">Batch No</label>
             <InputText  v-model="searchFilters.batchNo" />
@@ -408,7 +408,7 @@ import ProfilerService from "../../service/ProfilerService.js";
 import UserService from "../../service/UserService.js";
 import AutoComplete from "primevue/autocomplete";
  import { ref } from "vue";
- 
+
 @Options({
   title: 'Purchasing Report',
   components: {AutoComplete},
@@ -501,7 +501,7 @@ export default class PurchasingReport extends mixins(UtilityOptions) {
     this.profilerService = new ProfilerService();
     this.userService = new UserService();
   }
-  
+
    //CALLNING AFTER CONSTRUCTOR GET CALLED
   mounted() {
     this.storeList();
@@ -509,7 +509,7 @@ export default class PurchasingReport extends mixins(UtilityOptions) {
   }
 
   //OPEN DIALOG TO ADD NEW ITEM
-  openDialog() {       
+  openDialog() {
     this.submitted = false;
     this.dialogTitle = "Filter Report";
     this.productDialog = true;
@@ -570,7 +570,7 @@ export default class PurchasingReport extends mixins(UtilityOptions) {
         });
     });
   }
- 
+
   // USED TO GET SEARCHED ASSOCIATE
   loadList() {
     this.loading = true;
@@ -590,7 +590,7 @@ export default class PurchasingReport extends mixins(UtilityOptions) {
       });
     }, 200);
   }
-  
+
   searchUser(event) {
     setTimeout(() => {
       this.userService.searchUser(event.query.trim()).then((data) => {
@@ -604,7 +604,7 @@ export default class PurchasingReport extends mixins(UtilityOptions) {
     this.searchFilters.customerName = profileInfo.account_title;
     this.searchFilters.customerID = profileInfo.id;
   }
-  
+
   saveUser(event) {
     const userInfo = event.value;
     this.searchFilters.UserName = userInfo.name;
