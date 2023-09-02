@@ -84,7 +84,7 @@
                 <InputText
                   v-model="slotProps.data.genericName"
                   class="p-p-1"
-                  
+
                 />
               </template>
             </Column>
@@ -104,7 +104,7 @@
                   :options="productType"
                   optionLabel="option_name"
                   optionValue="id"
-                  
+
                 />
               </template>
             </Column>
@@ -116,7 +116,7 @@
                   :options="brand"
                   optionLabel="option_name"
                   optionValue="id"
-                  
+
                 />
               </template>
             </Column>
@@ -128,7 +128,7 @@
                   :options="brandSector"
                   optionLabel="option_name"
                   optionValue="id"
-                  
+
                 />
               </template>
             </Column>
@@ -140,7 +140,7 @@
                 :options="category"
                 optionLabel="option_name"
                 optionValue="id"
-                
+
               />
               </template>
             </Column>
@@ -167,7 +167,7 @@
                   :useGrouping="false"
                   v-model="slotProps.data.packSize"
                   class="p-p-1"
-                  
+
                 />
               </template>
             </Column>
@@ -177,7 +177,7 @@
                   :useGrouping="false"
                   v-model="slotProps.data.quantity"
                   class="p-p-1"
-                  
+
                 />
               </template>
             </Column>
@@ -188,7 +188,7 @@
                     selectionMode="single"
                     dateFormat="dd-mm-yy"
                     class="p-p-1"
-                    
+
                   />
               </template>
             </Column>
@@ -200,7 +200,7 @@
                   :minFractionDigits="2"
                   v-model="slotProps.data.packPurchasePrice"
                   class="p-p-1"
-                  
+
                 />
               </template>
             </Column>
@@ -224,7 +224,7 @@
                   :minFractionDigits="2"
                   v-model="slotProps.data.mRP"
                   class="p-p-1"
-                  
+
                 />
               </template>
             </Column>
@@ -246,7 +246,7 @@
                 <InputText
                   v-model="slotProps.data.batchNo"
                   class="p-p-1"
-                  
+
                 />
               </template>
             </Column>
@@ -319,7 +319,7 @@
                 />
               </template>
             </Column>
-          
+
             <Column :exportable="false" header="Action">
               <template #body="slotProps">
                 <span class="p-buttonset">
@@ -385,7 +385,7 @@ export default class ImportStock extends Vue {
       id : 0,
       option_name : '',
     }
-  ];     
+  ];
   private brandSector = [
     {
       id : 0,
@@ -397,7 +397,7 @@ export default class ImportStock extends Vue {
       id : 0,
       option_name : '',
     }
-  ]; 
+  ];
 
   private toast;
   private stockService;
@@ -522,7 +522,7 @@ export default class ImportStock extends Vue {
                     bandSectorID =  i.id;
                   }
                 });
-                
+
                 this.category.forEach(i => {
                   if(i.option_name == e[6])
                   {
@@ -574,7 +574,7 @@ export default class ImportStock extends Vue {
     }
     else
     {
-      this.toast.showWarning('Some of the fields are invalid'); 
+      this.toast.showWarning('Some of the fields are invalid');
     }
   }
 
@@ -649,7 +649,7 @@ export default class ImportStock extends Vue {
     });
     return totalAmount.toFixed(2);
   }
-  
+
   getPackWorth(data)
   {
     let totalAmount = 0;
@@ -684,7 +684,7 @@ export default class ImportStock extends Vue {
         v.productName == null ||
         v.batchNo == null || v.batchNo == "" ||
         v.productType == 0 || v.brandName == 0 ||  v.brandSector == 0 ||
-        v.category == 0 || v.packSize <= 0 || v.quantity <= 0
+        v.category == 0 || v.packSize <= 0 || v.quantity < 0
         ) {
         this.totalInValid++;
         invalidListItems.push(index);
@@ -714,15 +714,15 @@ export default class ImportStock extends Vue {
 
 .row-invalid
 {
-  color:#fff; 
-  background-color:#c00; 
+  color:#fff;
+  background-color:#c00;
   border-radius:5px;
 }
 
 .row-valid
 {
-  color:#fff; 
-  background-color:green; 
+  color:#fff;
+  background-color:green;
   border-radius:5px;
 }
 </style>
