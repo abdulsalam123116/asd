@@ -257,8 +257,10 @@
                     previewHeading: this.previewHeading,
                     receiptID: this.receiptID,
                 }"
+                :showPrintBarcode= "showPrintBarcode"
                 v-on:updatePreviewStatus="updatePreviewStatus"
             />
+
 
             <PaymentScreen
                 :receiptDetail="{
@@ -395,6 +397,8 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
         status: "",
     };
 
+    private showPrintBarcode = false;
+
     //CALLING WHEN PAGINATION BUTTON CLICKS
     onPage(event) {
         this.loadList(event.first);
@@ -428,6 +432,9 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
                 this.limit = data.limit;
                 this.statement = data.statement;
             });
+
+        if (this.itemFilter.type == "PUR") this.showPrintBarcode = true;
+        else this.showPrintBarcode = false;
     }
 
     loadSearchData() {

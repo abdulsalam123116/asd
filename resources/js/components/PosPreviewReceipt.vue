@@ -286,6 +286,7 @@
                                 style="display: none"
                             ></canvas>
                             <Button
+                                v-show="showPrintBarcode"
                                 icon="pi pi-print"
                                 label="Print Barcode"
                                 class="p-button-rounded p-button-info"
@@ -418,6 +419,8 @@ interface itemList {
 @Options({
     props: {
         PreviewReceipt: Object,
+        showPrintBarcode: Boolean, // Define the showPrintBarcode prop
+
     },
     watch: {
         PreviewReceipt(obj) {
@@ -524,11 +527,14 @@ export default class PosPreviewReceipt extends Vue {
         },
     ];
 
+
     //DEFAULT METHOD OF TYPE SCRIPT
     //CALLING WHENEVER COMPONENT LOADS
     created() {
         this.toast = new Toaster();
         this.posService = new PosService();
+        console.log('showPrintBarcode',this.showPrintBarcode);
+
     }
 
     mounted() {
