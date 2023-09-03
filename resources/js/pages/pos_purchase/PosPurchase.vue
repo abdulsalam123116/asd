@@ -606,7 +606,7 @@ import PosService from "../../service/PosService.js";
 import ProfilerService from "../../service/ProfilerService.js";
 import ChartService from "../../service/ChartService.js";
 import useVuelidate from "@vuelidate/core";
-import { required, requiredIf, helpers } from "@vuelidate/validators";
+import { required, requiredIf, helpers, integer } from "@vuelidate/validators";
 import Toaster from "../../helpers/Toaster";
 import moment from "moment";
 import AutoComplete from "primevue/autocomplete";
@@ -624,6 +624,10 @@ import {
 import router from "../../router";
 
 @Options({
+    props: {
+        itemId: integer,
+    },
+
     title: "Purchases",
     components: {
         AutoComplete,
@@ -725,6 +729,9 @@ export default class PosPurchase extends Vue {
 
     //DEFAULT METHOD OF TYPE SCRIPT
     created() {
+        console.log("itemId", this.itemId);
+        if (this.itemId) this.loadPurchaseItems();
+
         this.profilerService = new ProfilerService();
         this.posService = new PosService();
         this.toast = new Toaster();
@@ -767,6 +774,7 @@ export default class PosPurchase extends Vue {
         this.state.selectedProfile = profileInfo.account_title;
         this.item.profileID = profileInfo.id;
     }
+    loadPurchaseItems() {}
 
     saveItem(event) {
         const itemInfo = event.value;
@@ -813,6 +821,8 @@ export default class PosPurchase extends Vue {
 
     loadList() {
         this.posService.getItems().then((data) => {
+            console.log("loadList - getItems", data);
+
             // //taxNames
             this.taxNames = [];
 

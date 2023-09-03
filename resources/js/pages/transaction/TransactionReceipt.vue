@@ -164,6 +164,12 @@
                             label="SAVE STOCK"
                             class="p-button-md p-mx-2"
                         />
+                        <Button
+                            icon="pi pi-pencil"
+                            label="Edit Purchase"
+                            @click="openPurchaseScreen(item)"
+                            class="p-button-secondary p-button-md p-mx-2"
+                        />
                     </div>
                 </div>
             </Sidebar>
@@ -257,10 +263,9 @@
                     previewHeading: this.previewHeading,
                     receiptID: this.receiptID,
                 }"
-                :showPrintBarcode= "showPrintBarcode"
+                :showPrintBarcode="showPrintBarcode"
                 v-on:updatePreviewStatus="updatePreviewStatus"
             />
-
 
             <PaymentScreen
                 :receiptDetail="{
@@ -275,6 +280,10 @@
                 v-on:closePaymentScreenEvent="closePaymentScreen"
                 v-on:getProceededPaymentsEvent="getProceededPayments"
             />
+            <PosPurchase
+                v-if="showPosPurchase"
+                :itemId="this.item.id"
+            />
         </div>
     </section>
 </template>
@@ -288,6 +297,7 @@ import AutoComplete from "primevue/autocomplete";
 import SearchFilter from "../../components/SearchFilter.vue";
 import PosPreviewReceipt from "../../components/PosPreviewReceipt.vue";
 import PaymentScreen from "../../components/PaymentScreen.vue";
+import PosPurchase from "../pos_purchase/PosPurchase.vue";
 import { ActionTypes } from "../../store";
 import UtilityOptions from "../../mixins/UtilityOptions";
 
@@ -321,6 +331,7 @@ interface PaymentListType {
         AutoComplete,
         SearchFilter,
         PosPreviewReceipt,
+        PosPurchase,
     },
 })
 export default class TransactionReceipt extends mixins(UtilityOptions) {
@@ -398,7 +409,7 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     };
 
     private showPrintBarcode = false;
-
+    private showPosPurchase = false;
     //CALLING WHEN PAGINATION BUTTON CLICKS
     onPage(event) {
         this.loadList(event.first);
@@ -497,6 +508,8 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
     }
 
     openMenu(data) {
+        console.log("openMenu data:", data);
+
         this.menuBar = true;
         this.selectedReceiptData.paymentTransactions = this.camelizeKeys(
             data.receipt_balance
@@ -770,6 +783,12 @@ export default class TransactionReceipt extends mixins(UtilityOptions) {
                 paymentItem["paymentType"] = payment_type;
                 paymentItem["accountNo"] = account_no;
             });
+    }
+
+    openPurchaseScreen(data) {
+        console.log("openPurchaseScreen");
+        console.log("Purchase data:", data);
+        this.showPosPurchase = true;
     }
 }
 </script>
