@@ -21,6 +21,7 @@ use App\Models\DateFilters;
 use App\Models\Printer;
 use App\Models\PrinterReceipt;
 use App\Models\SubReceipt;
+use Faker\Core\Number;
 use Illuminate\Support\Facades\Config;
 
 class PosController extends Controller
@@ -395,21 +396,33 @@ class PosController extends Controller
 
         DB::beginTransaction();
 
+        //TODO: Save Or Update
+        $pos_receipt_id = intval($request->pos_receipt_id);
+        $transaction_id = intval($request->transaction_id);
+
+        if ($request->type == 'EPUR')
+            $request->type = 'PUR';
+
+
         try {
             $itemLists = json_decode($request->item_list);
             $counterEntry = json_decode($request->counter_entry);
             $paymentLists = json_decode($request->payment_list);
 
+
+
             if ($itemLists != NULL) {
                 $narration =  ($request->description == '' ? 'Transaction occurred from purchase screen' : $request->description);
 
-                $transaction = new Transaction([
-                    'narration'     => $narration,
-                    'generated_source' => $request->type,
-                    'branch_id'      => Auth::user()->branch_id,
-                ]);
-
-                $transaction->save();
+                // Use updateOrInsert to update or insert a transaction
+                $transaction = Transaction::updateOrCreate(
+                    ['id' => $transaction_id], // Check if transaction ID exists
+                    [
+                        'narration' => $narration,
+                        'generated_source' => $request->type,
+                        'branch_id' => Auth::user()->branch_id,
+                    ]
+                );
 
                 foreach ($counterEntry as $item) {
                     $subTransaction = new SubTransaction([
@@ -427,33 +440,38 @@ class PosController extends Controller
                 $t = new  PosReceipt();
                 $receiptNo =  $t->generateID($request->type);
 
-                $receiptItem             = new PosReceipt([
-                    'transaction_id'     => $transaction->id,
-                    'receipt_no'         => $receiptNo,
-                    'discount'           => $request->discount,
-                    'profile_id'         => $request->profile_id,
-                    'payment_method'    => $request->payment_method,
-                    'total_gross_amt'   => $request->total_gross_amt,
-                    'total_bill'         => $request->total_bill,
-                    'total_tendered'       => $request->total_tendered,
-                    'total_change'       => $request->total_change,
-                    'total_tax1'            => $request->total_tax1,
-                    'total_tax2'            => $request->total_tax2,
-                    'total_tax3'            => $request->total_tax3,
-                    'total_tax'            => $request->total_tax,
-                    'description'       => $request->description,
-                    'doctor_details'       => '',
-                    'patient_details'   => '',
-                    'bill_no'           => $request->bill_no,
-                    'created_by'          => Auth::user()->id,
-                    'receipt_date'      => date('Y-m-d'),
-                    'return_receipt'    => $request->search_receipt_no,
-                    'type'              => $request->type,
-                    'status'             => $request->status,
-                    'branch_id'          => Auth::user()->branch_id,
-                ]);
 
-                $receiptItem->save();
+
+                // Use updateOrInsert to update or insert a receipt
+                $receiptItem = PosReceipt::updateOrCreate(
+                    ['id' => $pos_receipt_id], // Check if receipt ID exists
+                    [
+                        'transaction_id'    => $transaction->id,
+                        'receipt_no'        => $receiptNo,
+                        'discount'          => $request->discount,
+                        'profile_id'        => $request->profile_id,
+                        'payment_method'    => $request->payment_method,
+                        'total_gross_amt'   => $request->total_gross_amt,
+                        'total_bill'        => $request->total_bill,
+                        'total_tendered'    => $request->total_tendered,
+                        'total_change'      => $request->total_change,
+                        'total_tax1'        => $request->total_tax1,
+                        'total_tax2'        => $request->total_tax2,
+                        'total_tax3'        => $request->total_tax3,
+                        'total_tax'         => $request->total_tax,
+                        'description'       => $request->description,
+                        'doctor_details'    => '',
+                        'patient_details'   => '',
+                        'bill_no'           => $request->bill_no,
+                        'created_by'        => Auth::user()->id,
+                        'receipt_date'      => date('Y-m-d'),
+                        'return_receipt'    => $request->search_receipt_no,
+                        'type'              => $request->type,
+                        'status'            => $request->status,
+                        'branch_id'         => Auth::user()->branch_id,
+                    ]
+                );
+
 
                 //IF USED CARDS
                 $t->passBankTransaction($transaction->id, $receiptNo, $narration, $paymentLists, $request->profile_id);
@@ -463,38 +481,40 @@ class PosController extends Controller
                     $s = new Stock();
                     $stock_id = $s->addReducePurchaseStock($item, $request->type);
 
-                    $PosSubReceipt = new PosSubReceipt([
-                        'pos_receipt_id'    => $receiptItem->id,
-                        'mode'                => $item->mode,
-                        'stock_id'            => $stock_id,
-                        'item_name'           => $item->productName,
-                        'generic_name'        => $item->generic,
-                        'item_description'  => $item->itemDescription,
-                        'unit'                => $item->unit,
-                        'total_unit'        => $item->totalUnit,
-                        'free_unit'           => $item->freeUnit,
-                        'supplier_bonus'       => $item->supplierBonus,
-                        'batch_no'           => $item->batchNo,
-                        'pack_size'           => $item->packSize,
-                        'sheet_size'           => $item->sheetSize,
-                        'purchase_price'       => $item->purchasePrice,
-                        'selling_price'       => $item->sellingPrice,
-                        'mrp'               => $item->mrp,
-                        'brand_name'           => $item->brandName,
-                        'sector_name'       => $item->sectorName,
-                        'category_name'       => $item->categoryName,
-                        'product_type'       => $item->productType,
-                        'expiry_date'       => Date('Y-m-d', strtotime($item->expiryDate)),
-                        'item_disc'           => $item->cusDisc,
-                        'purchase_disc'       => $item->itemDisc,
-                        'after_disc'           => $item->purchaseAfterDisc,
-                        'tax_1'               => $item->tax1,
-                        'tax_2'               => $item->tax2,
-                        'tax_3'               => $item->tax3,
-                        'sub_total'           => $item->subTotal,
-                    ]);
 
-                    $PosSubReceipt->save();
+                    $PosSubReceipt = PosSubReceipt::updateOrCreate(
+                        ['id' => $item->id], // Check if subtransaction  exists
+                        [
+                            'pos_receipt_id'    => $receiptItem->id,
+                            'mode'                => $item->mode,
+                            'stock_id'            => $stock_id,
+                            'item_name'           => $item->productName,
+                            'generic_name'        => $item->generic,
+                            'item_description'  => $item->itemDescription,
+                            'unit'                => $item->unit,
+                            'total_unit'        => $item->totalUnit,
+                            'free_unit'           => $item->freeUnit,
+                            'supplier_bonus'       => $item->supplierBonus,
+                            'batch_no'           => $item->batchNo,
+                            'pack_size'           => $item->packSize,
+                            'sheet_size'           => $item->sheetSize,
+                            'purchase_price'       => $item->purchasePrice,
+                            'selling_price'       => $item->sellingPrice,
+                            'mrp'               => $item->mrp,
+                            'brand_name'           => $item->brandName,
+                            'sector_name'       => $item->sectorName,
+                            'category_name'       => $item->categoryName,
+                            'product_type'       => $item->productType,
+                            'expiry_date'       => Date('Y-m-d', strtotime($item->expiryDate)),
+                            'item_disc'           => $item->cusDisc,
+                            'purchase_disc'       => $item->itemDisc,
+                            'after_disc'           => $item->purchaseAfterDisc,
+                            'tax_1'               => $item->tax1,
+                            'tax_2'               => $item->tax2,
+                            'tax_3'               => $item->tax3,
+                            'sub_total'           => $item->subTotal,
+                        ]
+                    );
                 }
 
                 if ($paymentLists != NULL) {

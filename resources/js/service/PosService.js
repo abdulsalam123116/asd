@@ -79,7 +79,7 @@ export default class PosService {
             });
     }
 
-    savePurchaseItem(postObj, paymentList, savedItemList, counterEntry) {
+    savePurchaseItem(postObj, paymentList, savedItemList, counterEntry, pos_receipt_id) {
         //SHOW LOADING
         const store = useStore();
         store.dispatch(ActionTypes.PROGRESS_BAR, true);
@@ -105,6 +105,8 @@ export default class PosService {
         formData.append("search_receipt_no", postObj.searchReceiptNo);
         formData.append("item_list", JSON.stringify(savedItemList));
         formData.append("counter_entry", JSON.stringify(counterEntry));
+        formData.append("pos_receipt_id", postObj.pos_receipt_id ? postObj.pos_receipt_id : '' )
+        formData.append("transaction_id", postObj.transaction_id ? postObj.transaction_id : '' )
 
         return instance()({
             method: "post",

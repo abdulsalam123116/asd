@@ -531,9 +531,12 @@
                 {{ currency }} {{ fixDigits(netTotal) }}</span
             >
             <Button
-                class="p-col p-button-warning b-style"
+                class="p-col b-style"
+                :class="
+                    item.type == 'EPUR' ? 'p-button-danger' : 'p-button-warning'
+                "
                 icon="pi pi-arrow-right"
-                label="NEXT"
+                :label="item.type == 'EPUR' ? 'NEXT AS EDIT' : 'NEXT'"
                 @click="openPaymentMethod(!v$.$invalid)"
                 :disabled="item.profileID == 0 || netTotal <= 0"
             />
@@ -641,6 +644,7 @@ export default class PosPurchase extends Vue {
     private modeList = [
         { label: "PURCHASE", value: "PUR" },
         { label: "PURCHASE RETURN", value: "RPU" },
+        { label: "PURCHASE EDIT", value: "EPUR" },
     ];
 
     private paymentDialog = false;
@@ -723,6 +727,8 @@ export default class PosPurchase extends Vue {
         searchReceiptNo: "",
         status: "Active",
         type: "PUR",
+        pos_receipt_id: null,
+        transaction_id: null
     };
 
     private v$ = useVuelidate(this.validationRules, this.state);
@@ -780,6 +786,7 @@ export default class PosPurchase extends Vue {
         const itemInfo = event.value;
 
         this.savedItemList.push({
+            id: null,
             mode: "Pack",
             stockID: itemInfo.id,
             productID: itemInfo.product_id,
@@ -1060,6 +1067,14 @@ export default class PosPurchase extends Vue {
 
         this.setAccountingEntries();
 
+        console.log("--------------Start--------------");
+        console.log("this.item", this.item);
+        console.log("Type", this.item.type);
+        console.log("this.paymentList", this.paymentList);
+        console.log("this.savedItemList", this.savedItemList);
+        console.log("this.counterEntry", this.counterEntry);
+        console.log("----------------End--------------");
+
         this.posService
             .savePurchaseItem(
                 this.item,
@@ -1068,7 +1083,7 @@ export default class PosPurchase extends Vue {
                 this.counterEntry
             )
             .then((res) => {
-                console.log("rrrrrrrrrrrrrrrr", res);
+                console.log("response savePurchaseItem", res);
 
                 if (res.alert == "info") {
                     this.clearAll();
@@ -1155,16 +1170,22 @@ export default class PosPurchase extends Vue {
 
         if (this.item.type == "RPU") {
             this.receiptDailog = true;
+        } else if (this.item.type == "EPUR") {
+            this.receiptDailog = true;
         }
 
         this.submitted = false;
         this.clearAll();
     }
 
+    // Fetch Receip
     fetchReceiptNo() {
+        // Get Purchase Items
         this.posService
             .getPurchaseItems(this.item.searchReceiptNo)
             .then((data) => {
+                console.log("getPurchaseItems data", data);
+
                 if (data.receipt != null) {
                     this.state.selectedProfile =
                         data.receipt.profile_name.accountName;
@@ -1177,11 +1198,16 @@ export default class PosPurchase extends Vue {
                         data.receipt.description == null
                             ? ""
                             : data.receipt.description;
+
+                    this.item.pos_receipt_id = data.receipt.id;
+                    this.item.transaction_id = data.receipt.transaction_id;
+
                 }
 
                 if (data.receiptItems != null) {
                     data.receiptItems.forEach((e) => {
                         this.savedItemList.push({
+                            id: e.id,
                             mode: e.mode,
                             stockID: Number(e.stock_id),
                             productID: Number(e.product_id),

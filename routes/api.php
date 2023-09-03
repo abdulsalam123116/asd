@@ -210,8 +210,8 @@ Route::post('pos_payments', [PosController::class, 'posPayments'])->middleware('
 Route::post('stock_transfer_status', [PosController::class, 'stockLeft'])->middleware(['auth:sanctum', 'permission:Orders']);
 Route::post('save_transfer_stock', [PosController::class, 'stockSaved'])->middleware(['auth:sanctum', 'permission:Orders']);
 Route::post('transaction_void', [PosController::class, 'voidStock'])->middleware(['auth:sanctum', 'permission:Transaction Receipt']);
-Route::post('get_pos_receipt', [PosController::class, 'getPosReceipt'])->middleware(['auth:sanctum', 'permission:Transaction Receipt']);
-Route::post('pos_update_payment_type', [ReceiptController::class, 'updatePaymentType']);//->middleware('auth:sanctum');
+Route::post('get_pos_receipt', [PosController::class, 'getPosReceipt']);//->middleware(['auth:sanctum', 'permission:Transaction Receipt']);
+Route::post('pos_update_payment_type', [ReceiptController::class, 'updatePaymentType'])->middleware('auth:sanctum');
 
 
 //PRIVILEGES LIST

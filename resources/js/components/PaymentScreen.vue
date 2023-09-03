@@ -475,7 +475,7 @@ interface PaymentListType {
 
     watch: {
         receiptDetail(obj) {
-            console.log("objjjj", obj);
+            // console.log("objjjj", obj);
 
             this.paymentDialog = obj.dialogStatus;
             this.closeConfirmation = obj.closeConfirmation;
