@@ -164,12 +164,12 @@
                             label="SAVE STOCK"
                             class="p-button-md p-mx-2"
                         />
-                        <Button
+                        <!-- <Button
                             icon="pi pi-pencil"
                             label="Edit Purchase"
                             @click="openPurchaseScreen(item)"
                             class="p-button-secondary p-button-md p-mx-2"
-                        />
+                        /> -->
                     </div>
                 </div>
             </Sidebar>

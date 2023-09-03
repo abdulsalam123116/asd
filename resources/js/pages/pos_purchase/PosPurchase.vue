@@ -1286,7 +1286,7 @@ export default class PosPurchase extends Vue {
     setAccountingEntries() {
         this.counterEntry = [];
 
-        if (this.item.type == "PUR") {
+        if (this.item.type == "PUR" || this.item.type == "EPUR") {
             this.counterEntry.push({
                 accountID: 3,
                 accountHead: "Inventory",

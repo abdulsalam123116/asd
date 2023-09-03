@@ -377,21 +377,21 @@ class PosController extends Controller
     {
         $request->validate([
             'profile_id'            => ['required'],
-            'payment_list'        => ['required'],
-            'discount'            => ['required'],
+            'payment_list'          => ['required'],
+            'discount'              => ['required'],
             'total_tendered'        => ['required'],
-            'total_change'        => ['required'],
-            'total_gross_amt'    => ['required'],
+            'total_change'          => ['required'],
+            'total_gross_amt'       => ['required'],
             'total_bill'            => ['required'],
             'total_tax1'            => ['required'],
             'total_tax2'            => ['required'],
             'total_tax3'            => ['required'],
-            'total_tax'            => ['required'],
+            'total_tax'             => ['required'],
             'payment_method'        => ['required'],
-            'status'               => ['required'],
-            'type'                => ['required'],
-            'item_list'            => ['required'],
-            'counter_entry'        => ['required'],
+            'status'                => ['required'],
+            'type'                  => ['required'],
+            'item_list'             => ['required'],
+            'counter_entry'         => ['required'],
         ]);
 
         DB::beginTransaction();
@@ -400,8 +400,9 @@ class PosController extends Controller
         $pos_receipt_id = intval($request->pos_receipt_id);
         $transaction_id = intval($request->transaction_id);
 
-        if ($request->type == 'EPUR')
-            $request->type = 'PUR';
+        $type = $request->type;
+        if ($type == 'EPUR')
+            $type = 'PUR';
 
 
         try {
@@ -419,10 +420,15 @@ class PosController extends Controller
                     ['id' => $transaction_id], // Check if transaction ID exists
                     [
                         'narration' => $narration,
-                        'generated_source' => $request->type,
+                        'generated_source' => $type,
                         'branch_id' => Auth::user()->branch_id,
                     ]
                 );
+
+                // Delete old SubTransaction in case Edit Purchase type
+                if ($request->type == "EPUR") {
+                    SubTransaction::where('transaction_id', $transaction->id)->delete();
+                }
 
                 foreach ($counterEntry as $item) {
                     $subTransaction = new SubTransaction([
@@ -438,7 +444,7 @@ class PosController extends Controller
 
 
                 $t = new  PosReceipt();
-                $receiptNo =  $t->generateID($request->type);
+                $receiptNo =  $t->generateID($type);
 
 
 
@@ -466,7 +472,7 @@ class PosController extends Controller
                         'created_by'        => Auth::user()->id,
                         'receipt_date'      => date('Y-m-d'),
                         'return_receipt'    => $request->search_receipt_no,
-                        'type'              => $request->type,
+                        'type'              => $type,
                         'status'            => $request->status,
                         'branch_id'         => Auth::user()->branch_id,
                     ]
@@ -479,7 +485,7 @@ class PosController extends Controller
                 foreach ($itemLists as $item) {
                     //MANAGING STOCKS
                     $s = new Stock();
-                    $stock_id = $s->addReducePurchaseStock($item, $request->type);
+                    $stock_id = $s->addReducePurchaseStock($item, $type);
 
 
                     $PosSubReceipt = PosSubReceipt::updateOrCreate(
@@ -541,7 +547,7 @@ class PosController extends Controller
                             'trans_time'               => date('H:i:s'),
                             'trans_total_amount'       => $item->transTotalAmount,
                             'trans_type'               => $item->transType,
-                            'source_type'           => $request->type,
+                            'source_type'           => $type,
                             'description'           => $narration,
                             'receipt_no'               => $receiptNo,
                             'created_by'               => Auth::user()->id,
