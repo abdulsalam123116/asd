@@ -25,7 +25,8 @@ use App\Http\Controllers\API\UserPrivilegesController;
 use App\Http\Controllers\API\HomeController;
 use App\Http\Controllers\API\StoreReportController;
 use App\Http\Controllers\API\SmsSettingController;
-
+use App\Http\Controllers\PrinterCommandController;
+use App\Http\Controllers\SocketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -210,7 +211,7 @@ Route::post('pos_payments', [PosController::class, 'posPayments'])->middleware('
 Route::post('stock_transfer_status', [PosController::class, 'stockLeft'])->middleware(['auth:sanctum', 'permission:Orders']);
 Route::post('save_transfer_stock', [PosController::class, 'stockSaved'])->middleware(['auth:sanctum', 'permission:Orders']);
 Route::post('transaction_void', [PosController::class, 'voidStock'])->middleware(['auth:sanctum', 'permission:Transaction Receipt']);
-Route::post('get_pos_receipt', [PosController::class, 'getPosReceipt']);//->middleware(['auth:sanctum', 'permission:Transaction Receipt']);
+Route::post('get_pos_receipt', [PosController::class, 'getPosReceipt']); //->middleware(['auth:sanctum', 'permission:Transaction Receipt']);
 Route::post('pos_update_payment_type', [ReceiptController::class, 'updatePaymentType'])->middleware('auth:sanctum');
 
 
@@ -244,3 +245,11 @@ Route::post('user_report', [StoreReportController::class, 'userReport'])->middle
 
 // Accept both GET and POST requests for testing
 Route::match(['get', 'post'], '/send-invoice', [InvoiceController::class, 'sendInvoiceToCSharpApp']);
+
+
+Route::get("testSocket", [SocketController::class, "testSocket"]);
+
+
+// Printer Commands
+Route::get('my-printer-commands/{user_id}', [PrinterCommandController::class, 'getMyPrinterCommands']);
+Route::resource('printer-commands',  PrinterCommandController::class);

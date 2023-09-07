@@ -219,7 +219,7 @@ export default class PrinterSetups extends Vue {
     { label: "Printers", to: "printer-setup" },
   ];
 
-  private printerTypes = [{ key: "Regular" }];
+  private printerTypes = [{ key: "Regular" },{ key: "Barcode" },{ key: "Receipt" }];
 
   private defaultTypes = [{ key: "Yes" }, { key: "No" }];
 

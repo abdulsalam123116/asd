@@ -720,6 +720,7 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import StockService from "../../service/StockService.js";
+import PrinterCommandService from "../../service/PrinterCommandService.js";
 import { reactive } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
@@ -740,6 +741,7 @@ export default class Stocks extends Vue {
     private goToFirstLink = 0;
     private currentStoreID = 0;
     private stockService;
+    private printerCommandService;
     private productDialog = false;
     private submitted = false;
     private statusDialog = false;
@@ -884,6 +886,7 @@ export default class Stocks extends Vue {
     //CALLING WHENEVER COMPONENT LOADS
     created() {
         this.stockService = new StockService();
+        this.printerCommandService = new PrinterCommandService();
         this.toast = new Toaster();
     }
 
@@ -1079,6 +1082,18 @@ export default class Stocks extends Vue {
     printBarcode(data) {
         console.log("barcode data", data);
 
+        this.printerCommandService
+            .savePrinterCommand(
+                data,
+                "Barcode",
+                "EPSON PRINTER 1",
+                data.branch_id,
+                1
+            )
+            .then((res) => {
+                console.log("res printerCommandService", res.data);
+            });
+
         // Get the canvas element using the ref
         const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
         const barcodeValue = data.batch_no; //+ data.expiry_date.replace(/-/g, "");
@@ -1151,11 +1166,10 @@ export default class Stocks extends Vue {
         printWindow.document.close();
 
         // setTimeout(() => {
-            printWindow.onload = () => {
-                printWindow.print();
-                console.log("Please click the 'Print' button in the print dialog.");
-
-            };
+        printWindow.onload = () => {
+            printWindow.print();
+            console.log("Please click the 'Print' button in the print dialog.");
+        };
         // }, 500);
 
         // Close the window after printing
