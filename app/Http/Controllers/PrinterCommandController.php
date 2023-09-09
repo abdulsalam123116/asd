@@ -29,7 +29,7 @@ class PrinterCommandController extends Controller
         $validatedData = $request->validate([
             'data' => 'required',
             'printer_type' => 'required',
-            'printer_name' => 'required',
+            'printer_name' => 'nullable',
             'branch_id' => 'required',
             'user_id' => 'required',
         ]);
@@ -96,9 +96,19 @@ class PrinterCommandController extends Controller
         return response()->json(['message' => 'Printer command deleted'], 204);
     }
 
-    public function getMyPrinterCommands($user_id, $branch_id)
+    public function getMyPrinterCommands(Request $request)
     {
+
+        $user_id = $request->input('user_id');
+        $branch_id = $request->input('branch_id');
+
         $printerCommands = PrinterCommand::where('user_id', $user_id)->get();
+
+        // Delete the fetched printer commands
+        foreach ($printerCommands as $command) {
+            $command->delete();
+        }
+
         return response()->json($printerCommands);
     }
 }

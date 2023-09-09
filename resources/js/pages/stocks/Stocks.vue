@@ -1086,14 +1086,14 @@ export default class Stocks extends Vue {
             .savePrinterCommand(
                 data,
                 "Barcode",
-                "EPSON PRINTER 1",
+                "",
                 data.branch_id,
                 1
             )
             .then((res) => {
                 console.log("res printerCommandService", res.data);
             });
-
+        /*
         // Get the canvas element using the ref
         const canvasElement = this.$refs.barcodeCanvas as HTMLCanvasElement;
         const barcodeValue = data.batch_no; //+ data.expiry_date.replace(/-/g, "");
@@ -1177,6 +1177,7 @@ export default class Stocks extends Vue {
         printWindow.addEventListener("afterprint", () => {
             printWindow.close();
         });
+        */
     }
 
     getPackSellingPrice(data) {

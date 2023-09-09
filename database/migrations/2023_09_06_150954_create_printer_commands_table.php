@@ -17,7 +17,7 @@ class CreatePrinterCommandsTable extends Migration
             $table->id();
             $table->text('data'); // Column for storing data
             $table->enum('printer_type', ['Barcode', 'Receipt']); // ENUM column for printer type
-            $table->string('printer_name');
+            $table->string('printer_name')->nullable();
             $table->unsignedBigInteger('branch_id'); // Column for pharmacy ID
             $table->unsignedBigInteger('user_id'); // Column for user ID
             $table->timestamps();

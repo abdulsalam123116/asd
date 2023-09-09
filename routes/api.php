@@ -251,5 +251,5 @@ Route::get("testSocket", [SocketController::class, "testSocket"]);
 
 
 // Printer Commands
-Route::get('my-printer-commands/{user_id}', [PrinterCommandController::class, 'getMyPrinterCommands']);
+Route::get('getMyPrinterCommands', [PrinterCommandController::class, 'getMyPrinterCommands']);
 Route::resource('printer-commands',  PrinterCommandController::class);
