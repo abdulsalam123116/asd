@@ -372,6 +372,14 @@
                         class="p-button-warning pull-left"
                         @click="printReceipt()"
                     />
+                    <Button
+                        v-show="showPrintBarcode"
+                        type="button"
+                        label="Print All Barcode"
+                        icon="pi pi-print"
+                        class="p-button-primary pull-left"
+                        @click="printAllBarcode()"
+                    />
                 </div>
             </div>
         </template>
@@ -385,6 +393,7 @@ import Toaster from "../helpers/Toaster";
 import PosService from "../service/PosService.js";
 import { useStore, ActionTypes } from "../store";
 import JsBarcode from "jsbarcode";
+import PrinterCommandService from "../service/PrinterCommandService.js";
 
 interface itemList {
     batchNo: string;
@@ -420,7 +429,6 @@ interface itemList {
     props: {
         PreviewReceipt: Object,
         showPrintBarcode: Boolean, // Define the showPrintBarcode prop
-
     },
     watch: {
         PreviewReceipt(obj) {
@@ -527,14 +535,15 @@ export default class PosPreviewReceipt extends Vue {
         },
     ];
 
+    private printerCommandService;
 
     //DEFAULT METHOD OF TYPE SCRIPT
     //CALLING WHENEVER COMPONENT LOADS
     created() {
         this.toast = new Toaster();
         this.posService = new PosService();
-        console.log('showPrintBarcode',this.showPrintBarcode);
-
+        console.log("showPrintBarcode", this.showPrintBarcode);
+        this.printerCommandService = new PrinterCommandService();
     }
 
     mounted() {
@@ -718,6 +727,28 @@ export default class PosPreviewReceipt extends Vue {
 
     printReceipt() {
         window.print();
+    }
+
+    printAllBarcode() {
+        console.log("item list all barcode", this.itemList);
+
+        this.itemList.forEach((inputJson) => {
+            const outputJson = {
+                product_name: inputJson.genericName,
+                branch_name: "Nour Alhayat",
+                batch_no: inputJson.batchNo,
+                expiry_date: inputJson.expiryDate,
+                sale_price: inputJson.sellingPrice,
+            };
+
+            for (let index = 0; index < inputJson.unit; index++) {
+                this.printerCommandService
+                    .savePrinterCommand(outputJson, "Barcode", "", 1, 1)
+                    .then((res) => {
+                        console.log("res printerCommandService", res.data);
+                    });
+            }
+        });
     }
 
     get receiptTypeName() {
