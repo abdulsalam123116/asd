@@ -1083,13 +1083,7 @@ export default class Stocks extends Vue {
         console.log("barcode data", data);
 
         this.printerCommandService
-            .savePrinterCommand(
-                data,
-                "Barcode",
-                "",
-                data.branch_id,
-                1
-            )
+            .savePrinterCommand(data, "Barcode", data.branch_id, 1)
             .then((res) => {
                 console.log("res printerCommandService", res.data);
             });

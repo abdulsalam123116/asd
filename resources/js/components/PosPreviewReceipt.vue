@@ -285,13 +285,13 @@
                                 ref="barcodeCanvas"
                                 style="display: none"
                             ></canvas>
-                            <Button
+                          <!--  <Button
                                 v-show="showPrintBarcode"
                                 icon="pi pi-print"
                                 label="Print Barcode"
                                 class="p-button-rounded p-button-info"
                                 @click="printBarcode(slotProps.data)"
-                            />
+                            />-->
                         </template>
                     </Column>
                 </DataTable>
@@ -365,13 +365,13 @@
                     />
                 </div>
                 <div class="p-col p-p-0">
-                    <Button
+                    <!-- <Button
                         type="button"
                         label="Print"
                         icon="pi pi-print"
                         class="p-button-warning pull-left"
                         @click="printReceipt()"
-                    />
+                    /> -->
                     <Button
                         v-show="showPrintBarcode"
                         type="button"
@@ -734,7 +734,7 @@ export default class PosPreviewReceipt extends Vue {
 
         this.itemList.forEach((inputJson) => {
             const outputJson = {
-                product_name: inputJson.genericName,
+                product_name: inputJson.itemName,
                 branch_name: "Nour Alhayat",
                 batch_no: inputJson.batchNo,
                 expiry_date: inputJson.expiryDate,
@@ -743,7 +743,7 @@ export default class PosPreviewReceipt extends Vue {
 
             for (let index = 0; index < inputJson.unit; index++) {
                 this.printerCommandService
-                    .savePrinterCommand(outputJson, "Barcode", "", 1, 1)
+                    .savePrinterCommand(outputJson, "Barcode", 1, 1)
                     .then((res) => {
                         console.log("res printerCommandService", res.data);
                     });

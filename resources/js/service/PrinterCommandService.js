@@ -6,7 +6,6 @@ export default class PrinterCommandService {
     savePrinterCommand(
         dataObj,
         printer_type,
-        printer_name,
         branch_id,
         user_id
     ) {
@@ -17,7 +16,6 @@ export default class PrinterCommandService {
         const formData = new FormData();
         formData.append("data", JSON.stringify(dataObj));
         formData.append("printer_type", printer_type);
-        formData.append("printer_name", printer_name);
         formData.append("branch_id", branch_id);
         formData.append("user_id", user_id);
         return instance()({

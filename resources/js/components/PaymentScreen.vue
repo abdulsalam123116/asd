@@ -487,7 +487,6 @@ interface PaymentListType {
             this.paymentAction.needlePoints = obj.needlePoints;
             this.dialogTilte =
                 obj.dialogTilte + " for Customer " + this.customerName;
-
         },
         discountAmount(newDiscount) {
             this.addDiscount();
@@ -528,7 +527,6 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
     };
 
     private paymentList: PaymentListType[] = [];
-
 
     created() {
         this.paymentService = new PaymentService();
@@ -786,14 +784,16 @@ export default class PaymentScreen extends mixins(UtilityOptions) {
         }
     }
 
-
-
     printReceiptAndConfirm() {
         this.confirmPayments();
     }
 
     emitPayments() {
-        this.$emit("getProceededPaymentsEvent", this.paymentList, this.discountAmount);
+        this.$emit(
+            "getProceededPaymentsEvent",
+            this.paymentList,
+            this.discountAmount
+        );
         this.paymentDialog = false;
         this.paymentConfirmDialog = false;
         this.paymentList = [];

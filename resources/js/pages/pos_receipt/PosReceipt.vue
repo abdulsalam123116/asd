@@ -126,7 +126,10 @@
                                         <small>
                                             Units :
                                             <b class="pull-right">
-                                                {{ slotProps.item.qty / slotProps.item.pack_size }}
+                                                {{
+                                                    slotProps.item.qty /
+                                                    slotProps.item.pack_size
+                                                }}
                                             </b>
                                         </small>
                                         <small>
@@ -778,6 +781,7 @@ import { useStore, ActionTypes } from "../../store";
 import ProfilerDialog from "../../components/ProfilerDialog.vue";
 import { ItemList } from "../pos_receipt/IPosReceipt";
 import router from "../../router";
+import PrinterCommandService from "../../service/PrinterCommandService.js";
 
 interface PaymentListType {
     paymentType: string;
@@ -842,6 +846,7 @@ export default class PosReceipt extends Vue {
     private screenMode = "minimize";
     private profilerService;
     private posService;
+    private printerCommandService;
     private toast;
     private storeList = [];
     private profilerList = [];
@@ -943,6 +948,7 @@ export default class PosReceipt extends Vue {
     created() {
         this.profilerService = new ProfilerService();
         this.posService = new PosService();
+        this.printerCommandService = new PrinterCommandService();
         this.toast = new Toaster();
     }
 
@@ -1430,7 +1436,51 @@ export default class PosReceipt extends Vue {
         });
 
         const balanceDue = total - totalPaid;
-        // Define the content of the receipt that needs to be printed
+
+        var invoiceProducts = [];
+        this.savedItemList.forEach((item) => {
+            const tempProduct = {
+                Name: item.productName,
+                Unit: item.unit,
+                Currency: this.currency,
+                Price: item.sellingPrice,
+                Total: item.subTotal,
+            };
+            invoiceProducts.push(tempProduct); // Use push to add items to the array
+        });
+
+        var payments = [];
+        this.paymentList.forEach((item) => {
+            const tempPayment = {
+                PaymentType: item.paymentType,
+                TransTotalAmount: item.transTotalAmount + " " + this.currency,
+            };
+            payments.push(tempPayment); // Use push to add items to the array
+        });
+
+        var invoiceObject = {
+            PharmacyName: this.storeName,
+            Address: this.storeAddress,
+            ReceiptDate: formattedDate,
+            InvoiceNo: this.receipt_no,
+            Customer: this.state.selectedProfile,
+            Products: invoiceProducts,
+            NetTotal: this.netTotal,
+            PaymentList: payments,
+            Total: this.fixLength(total) + " " + this.currency,
+            Discount: this.discount,
+            BalanceDue: this.fixLength(balanceDue) + " " + this.currency,
+        };
+
+        console.log("invoiceObject", invoiceObject);
+
+        // this.printerCommandService
+        //     .savePrinterCommand(invoiceObject, "Invoice", 1, 1)
+        //     .then((res) => {
+        //         console.log("res printerCommandService", res.data);
+        //     });
+
+        // // Define the content of the receipt that needs to be printed
         const receiptContent = `<!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -1557,12 +1607,12 @@ export default class PosReceipt extends Vue {
                                 )
                                 .join("")}
                             <h3>Total: ${this.fixLength(total)} ${
-                                this.currency
-                            }</h3>
+            this.currency
+        }</h3>
                             <p>Discount: ${this.discount}%</p>
                             <p>Balance Due: ${this.fixLength(balanceDue)} ${
-                                this.currency
-                            }</p>
+            this.currency
+        }</p>
                         </div>
 
                         <div class="footer">
@@ -1582,11 +1632,17 @@ export default class PosReceipt extends Vue {
         printWindow.document.close();
 
         // Trigger the print dialog for the hidden window
-        setTimeout(() => {
+        // setTimeout(() => {
+        printWindow.onload = () => {
             printWindow.print();
-        }, 500);
-        // Close the hidden window after printing is done
-        //printWindow.close();
+        };
+        // }, 500);
+
+        // Close the window after printing
+        // Detect when printing is done
+        printWindow.addEventListener("afterprint", () => {
+            printWindow.close();
+        });
     }
 
     fixLength(value) {
