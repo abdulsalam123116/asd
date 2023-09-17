@@ -1429,6 +1429,8 @@ export default class PosReceipt extends Vue {
         const total = this.netTotal - (this.netTotal * this.discount) / 100; // after discount
         var totalPaid = 0;
 
+        var totalVat = 0;
+
         this.paymentList.forEach((e) => {
             if (e.paymentType != "Tip") {
                 totalPaid = totalPaid + e.transTotalAmount;
@@ -1445,8 +1447,11 @@ export default class PosReceipt extends Vue {
                 Currency: this.currency,
                 Price: item.sellingPrice,
                 Total: item.subTotal,
+                Vat: item.tax1,
             };
             invoiceProducts.push(tempProduct); // Use push to add items to the array
+
+            totalVat += item.tax1;
         });
 
         var payments = [];
@@ -1613,6 +1618,7 @@ export default class PosReceipt extends Vue {
                             <p>Balance Due: ${this.fixLength(balanceDue)} ${
             this.currency
         }</p>
+        <p>VAT: ${totalVat} ${this.currency}</p>
                         </div>
 
                         <div class="footer">
