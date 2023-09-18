@@ -1451,7 +1451,7 @@ export default class PosReceipt extends Vue {
             };
             invoiceProducts.push(tempProduct); // Use push to add items to the array
 
-            totalVat += item.tax1;
+            totalVat += item.tax1 + item.tax2 + item.tax3;
         });
 
         var payments = [];
