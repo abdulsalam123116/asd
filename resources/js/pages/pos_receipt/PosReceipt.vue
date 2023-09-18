@@ -1427,7 +1427,7 @@ export default class PosReceipt extends Vue {
         );
 console.log('this.netTotal - totalGross', this.totalGross);
 
-        const total = this.totalGross - (this.totalGross * this.discount) / 100; // after discount
+        const total = this.netTotal - (this.netTotal * this.discount) / 100; // after discount
         var totalPaid = 0;
 
         var totalVat = 0;
@@ -1601,7 +1601,7 @@ console.log('this.netTotal - totalGross', this.totalGross);
                         <div class="total">
                             <h4>Net Total: ${this.fixDigits(this.totalGross)} </h4>
                             <p>Discount: ${this.discount}%</p>
-                                <p>VAT: ${this.fixLength(total * totalVat / 100)} ${
+                                <p>VAT: ${this.fixLength(total - this.totalGross)} ${
             this.currency
         }</p>
                             <h3>Total: ${this.fixLength(total)} ${
