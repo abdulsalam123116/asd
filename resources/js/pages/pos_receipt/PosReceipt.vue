@@ -1599,9 +1599,16 @@ export default class PosReceipt extends Vue {
 
                         <div class="total">
                             <h4>Net Total: ${this.fixLength(
-                                this.netTotal
+                                this.netTotal - (this.netTotal * totalVat) / 100
                             )} </h4>
-                            ${this.paymentList
+                            <p>Discount: ${this.discount}%</p>
+                                <p>VAT: ${(total * totalVat) / 100} ${
+            this.currency
+        }</p>
+                            <h3>Total: ${this.fixLength(total)} ${
+            this.currency
+        }</h3>
+        ${this.paymentList
                                 .map(
                                     (item) =>
                                         `  <p>${item.paymentType} : ${
@@ -1611,14 +1618,9 @@ export default class PosReceipt extends Vue {
                                         }</p>`
                                 )
                                 .join("")}
-                            <h3>Total: ${this.fixLength(total)} ${
-            this.currency
-        }</h3>
-                            <p>Discount: ${this.discount}%</p>
                             <p>Balance Due: ${this.fixLength(balanceDue)} ${
             this.currency
         }</p>
-        <p>VAT: ${totalVat} ${this.currency}</p>
                         </div>
 
                         <div class="footer">
