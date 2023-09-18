@@ -660,7 +660,7 @@
                     # {{ savedItemList.length }}</span
                 >
                 <span class="set-bottom-amt p-col"
-                    >Total Gross <br />
+                    >Net Total <br />
                     {{ currency }} {{ fixDigits(totalGross) }}</span
                 >
                 <span class="set-bottom-amt p-col"
@@ -680,7 +680,7 @@
                     {{ currency }} {{ fixDigits(totalTax3) }}</span
                 >
                 <span class="set-bottom-amt p-col"
-                    >Net Total <br />
+                    >Total Gross <br />
                     {{ currency }} {{ fixDigits(netTotal) }}</span
                 >
                 <Button
@@ -1425,8 +1425,9 @@ export default class PosReceipt extends Vue {
             "savedItemList .. savedItemList... savedItemList",
             this.savedItemList
         );
+console.log('this.netTotal - totalGross', this.totalGross);
 
-        const total = this.netTotal - (this.netTotal * this.discount) / 100; // after discount
+        const total = this.totalGross - (this.totalGross * this.discount) / 100; // after discount
         var totalPaid = 0;
 
         var totalVat = 0;
@@ -1445,7 +1446,7 @@ export default class PosReceipt extends Vue {
                 Name: item.productName,
                 Unit: item.unit,
                 Currency: this.currency,
-                Price: item.sellingPrice,
+                Price: item.unit * item.mrp,
                 Total: item.subTotal,
                 Vat: item.tax1,
             };
@@ -1470,7 +1471,7 @@ export default class PosReceipt extends Vue {
             InvoiceNo: this.receipt_no,
             Customer: this.state.selectedProfile,
             Products: invoiceProducts,
-            NetTotal: this.netTotal,
+            NetTotal: this.totalGross,
             PaymentList: payments,
             Total: this.fixLength(total) + " " + this.currency,
             Discount: this.discount,
@@ -1587,8 +1588,8 @@ export default class PosReceipt extends Vue {
                                 <tr>
                                     <td>${item.productName}</td>
                                     <td>${item.unit}</td>
-                                    <td>${item.sellingPrice} ${this.currency}</td>
-                                    <td>${item.subTotal} ${this.currency}</td>
+                                    <td>${item.mrp } ${this.currency}</td>
+                                    <td>${item.mrp * item.unit} ${this.currency}</td>
                                 </tr>
                                 `
                                     )
@@ -1598,11 +1599,9 @@ export default class PosReceipt extends Vue {
                         </table>
 
                         <div class="total">
-                            <h4>Net Total: ${this.fixLength(
-                                this.netTotal - (this.netTotal * totalVat) / 100
-                            )} </h4>
+                            <h4>Net Total: ${this.fixDigits(this.totalGross)} </h4>
                             <p>Discount: ${this.discount}%</p>
-                                <p>VAT: ${(total * totalVat) / 100} ${
+                                <p>VAT: ${this.fixLength(total * totalVat / 100)} ${
             this.currency
         }</p>
                             <h3>Total: ${this.fixLength(total)} ${
