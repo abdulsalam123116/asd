@@ -111,4 +111,25 @@ class PrinterCommandController extends Controller
 
         return response()->json($printerCommands);
     }
+
+    public function printerCommandsCount(Request $request)
+    {
+        $validatedData = $request->validate([
+            'data' => 'required',
+            'printer_type' => 'required',
+            'printer_name' => 'nullable',
+            'branch_id' => 'required',
+            'user_id' => 'required',
+        ]);
+
+        $count = $request->input('count');
+
+        $printerCommands = [];
+        for ($i = 0; $i < $count; $i++) {
+            $printerCommand = PrinterCommand::create($validatedData);
+            $printerCommands[] = $printerCommand;
+        }
+
+        return response()->json($printerCommands, 201);
+    }
 }

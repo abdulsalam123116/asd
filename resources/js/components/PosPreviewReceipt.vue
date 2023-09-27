@@ -285,7 +285,7 @@
                                 ref="barcodeCanvas"
                                 style="display: none"
                             ></canvas>
-                          <!--  <Button
+                            <!--  <Button
                                 v-show="showPrintBarcode"
                                 icon="pi pi-print"
                                 label="Print Barcode"
@@ -729,10 +729,10 @@ export default class PosPreviewReceipt extends Vue {
         window.print();
     }
 
-    printAllBarcode() {
+    async printAllBarcode() {
         console.log("item list all barcode", this.itemList);
 
-        this.itemList.forEach((inputJson) => {
+        const promises = this.itemList.map(async (inputJson) => {
             const outputJson = {
                 product_name: inputJson.itemName,
                 branch_name: "Nour Alhayat",
@@ -742,14 +742,26 @@ export default class PosPreviewReceipt extends Vue {
             };
 
             var total_unit = inputJson.unit + inputJson.freeUnit;
-            for (let index = 0; index < total_unit ; index++) {
-                this.printerCommandService
-                    .savePrinterCommand(outputJson, "Barcode", 1, 1)
-                    .then((res) => {
-                        console.log("res printerCommandService", res.data);
-                    });
-            }
+
+            // Use await to wait for the asynchronous call
+            const res =
+                await this.printerCommandService.savePrinterCommandCount(
+                    outputJson,
+                    "Barcode",
+                    1,
+                    1,
+                    total_unit
+                );
+
+            console.log("res printerCommandService", res);
+
+            return res;
         });
+
+        // Use Promise.all to wait for all promises to resolve
+        const results = await Promise.all(promises);
+
+        console.log("All responses:", results);
     }
 
     get receiptTypeName() {
