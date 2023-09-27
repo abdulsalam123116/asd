@@ -738,10 +738,11 @@ export default class PosPreviewReceipt extends Vue {
                 branch_name: "Nour Alhayat",
                 batch_no: inputJson.batchNo,
                 expiry_date: inputJson.expiryDate,
-                sale_price: inputJson.sellingPrice,
+                sale_price: inputJson.mrp,
             };
 
-            for (let index = 0; index < inputJson.unit; index++) {
+            var total_unit = inputJson.unit + inputJson.freeUnit;
+            for (let index = 0; index < total_unit ; index++) {
                 this.printerCommandService
                     .savePrinterCommand(outputJson, "Barcode", 1, 1)
                     .then((res) => {
