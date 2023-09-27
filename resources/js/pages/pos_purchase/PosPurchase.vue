@@ -265,6 +265,7 @@
                                             style="height: 30px"
                                             v-model="savedItem.batchNo"
                                             class="p-p-1"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -276,6 +277,7 @@
                                             :min="1"
                                             v-model="savedItem.unit"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -287,6 +289,7 @@
                                             :min="1"
                                             v-model="savedItem.freeUnit"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -298,6 +301,7 @@
                                             :min="1"
                                             v-model="savedItem.supplierBonus"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -310,6 +314,7 @@
                                             :maxFractionDigits="2"
                                             v-model="savedItem.purchasePrice"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -322,6 +327,7 @@
                                             :maxFractionDigits="2"
                                             v-model="savedItem.itemDisc"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -337,6 +343,7 @@
                                             "
                                             :disabled="true"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -349,6 +356,7 @@
                                             :maxFractionDigits="2"
                                             v-model="savedItem.mrp"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -361,6 +369,7 @@
                                             :maxFractionDigits="2"
                                             v-model="savedItem.cusDisc"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -373,6 +382,7 @@
                                             selectionMode="single"
                                             dateFormat="dd-mm-yy"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -385,6 +395,7 @@
                                             :maxFractionDigits="2"
                                             v-model="savedItem.tax1"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -397,6 +408,7 @@
                                             :maxFractionDigits="2"
                                             v-model="savedItem.tax2"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -409,6 +421,7 @@
                                             :maxFractionDigits="2"
                                             v-model="savedItem.tax3"
                                             class="p-p-0"
+                                            @focusout="updateOnHoldItems"
                                         />
                                     </div>
                                 </td>
@@ -728,7 +741,7 @@ export default class PosPurchase extends Vue {
         status: "Active",
         type: "PUR",
         pos_receipt_id: null,
-        transaction_id: null
+        transaction_id: null,
     };
 
     private v$ = useVuelidate(this.validationRules, this.state);
@@ -819,11 +832,19 @@ export default class PosPurchase extends Vue {
             subTotal: 0,
         });
 
+        console.log("on hold items save", this.savedItemList);
+
+        this.updateOnHoldItems();
+        this.itemScanBox = "";
+    }
+
+    updateOnHoldItems() {
+        console.log('updateOnHoldItems calle ..');
+
         localStorage.setItem(
             "purchase_savedItemList",
             JSON.stringify(this.savedItemList)
         );
-        this.itemScanBox = "";
     }
 
     loadList() {
@@ -1201,7 +1222,6 @@ export default class PosPurchase extends Vue {
 
                     this.item.pos_receipt_id = data.receipt.id;
                     this.item.transaction_id = data.receipt.transaction_id;
-
                 }
 
                 if (data.receiptItems != null) {
