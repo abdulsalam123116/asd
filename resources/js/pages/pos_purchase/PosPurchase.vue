@@ -237,6 +237,7 @@
                             <th>Purchase Price ({{ currency }})</th>
                             <th>P.Disc (%)</th>
                             <th>After Disc</th>
+                            <th>Selling Price ({{ currency }})</th>
                             <th>MRP PRICE ({{ currency }})</th>
                             <th>Cus Disc %</th>
                             <th>Expiry Date</th>
@@ -274,7 +275,6 @@
                                         <InputNumber
                                             :useGrouping="false"
                                             style="width: 2rem; height: 30px"
-                                            :min="1"
                                             v-model="savedItem.unit"
                                             class="p-p-0"
                                             @focusout="updateOnHoldItems"
@@ -286,7 +286,6 @@
                                         <InputNumber
                                             :useGrouping="false"
                                             style="width: 2rem; height: 30px"
-                                            :min="1"
                                             v-model="savedItem.freeUnit"
                                             class="p-p-0"
                                             @focusout="updateOnHoldItems"
@@ -298,7 +297,6 @@
                                         <InputNumber
                                             :useGrouping="false"
                                             style="width: 2rem; height: 30px"
-                                            :min="1"
                                             v-model="savedItem.supplierBonus"
                                             class="p-p-0"
                                             @focusout="updateOnHoldItems"
@@ -309,7 +307,6 @@
                                     <div class="p-inputgroup">
                                         <InputNumber
                                             style="width: 2rem; height: 30px"
-                                            :min="1"
                                             :minFractionDigits="2"
                                             :maxFractionDigits="2"
                                             v-model="savedItem.purchasePrice"
@@ -347,11 +344,25 @@
                                         />
                                     </div>
                                 </td>
+                                <!-- Pack Selling -->
+                                <td>
+                                    <div class="p-inputgroup">
+                                        <InputNumber
+                                            :disabled="true"
+                                            style="width: 2rem; height: 30px"
+                                            :minFractionDigits="2"
+                                            :maxFractionDigits="2"
+                                            v-model="savedItem.sellingPrice"
+                                            class="p-p-0"
+                                            @focusout="updateOnHoldItems"
+                                        />
+                                    </div>
+                                </td>
+                                <!-- MRP -->
                                 <td>
                                     <div class="p-inputgroup">
                                         <InputNumber
                                             style="width: 2rem; height: 30px"
-                                            :min="1"
                                             :minFractionDigits="2"
                                             :maxFractionDigits="2"
                                             v-model="savedItem.mrp"
@@ -839,7 +850,7 @@ export default class PosPurchase extends Vue {
     }
 
     updateOnHoldItems() {
-        console.log('updateOnHoldItems calle ..');
+        console.log("updateOnHoldItems calle ..");
 
         localStorage.setItem(
             "purchase_savedItemList",
