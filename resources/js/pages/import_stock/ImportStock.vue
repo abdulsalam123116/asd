@@ -88,6 +88,7 @@
                         <InputText
                             v-model="slotProps.data.productName"
                             class="p-p-1"
+                            @input="changeGenericNameAndBatchNo(slotProps.data)"
                         />
                     </template>
                 </Column>
@@ -373,8 +374,8 @@ export default class ImportStock extends Vue {
 
     private productType = [
         {
-            id: 0,
-            option_name: "",
+            id: 5,
+            option_name: "Finished Product",
         },
     ];
     private brand = [
@@ -597,11 +598,18 @@ export default class ImportStock extends Vue {
     addNewRow() {
         this.setDefaultValues();
 
+        // Get the current date
+        const currentDate = new Date();
+
+        // Add one year to the current date
+        const nextYearDate = new Date(currentDate);
+        nextYearDate.setFullYear(currentDate.getFullYear() + 1);
+
         this.excelFileContent.push({
             productName: "",
             genericName: "",
             barcode: "",
-            productType: 0,
+            productType: 5,
             brandName: this.defaultBrandid,
             brandSector: this.defaultBrandSectorid,
             category: this.defaultCategoryid,
@@ -609,7 +617,7 @@ export default class ImportStock extends Vue {
             stripSize: 0,
             packSize: 0,
             quantity: 0,
-            expiryDate: "",
+            expiryDate: nextYearDate,
             packPurchasePrice: 0,
             packSellingPrice: 0,
             mRP: 0,
@@ -622,6 +630,16 @@ export default class ImportStock extends Vue {
             minimumStock: 0,
             storeLocations: "",
         });
+    }
+
+    changeGenericNameAndBatchNo(item) {
+        console.log('item.genericName',item.genericName);
+        console.log('item.productName',item.productName.slice(0, -1));
+
+        if (item.genericName == "" || item.genericName == item.productName.slice(0, -1))
+            item.genericName = item.productName;
+        if (item.batchNo == "" || item.batchNo == item.productName.slice(0, -1))
+            item.batchNo = item.productName;
     }
 
     clearListItem(item) {
