@@ -348,7 +348,6 @@
                                 <td>
                                     <div class="p-inputgroup">
                                         <InputNumber
-                                            :disabled="true"
                                             style="width: 2rem; height: 30px"
                                             :minFractionDigits="2"
                                             :maxFractionDigits="2"
@@ -912,7 +911,8 @@ export default class PosPurchase extends Vue {
         const qty = Number(data.unit);
         const price = Number(data.purchasePrice);
         const discount = Number(data.itemDisc);
-        const mrp = Number(data.mrp);
+        //const mrp = Number(data.mrp);
+        const packPrice = Number(data.sellingPrice);
 
         const tax1 = data.tax1;
         const tax2 = data.tax2;
@@ -920,8 +920,14 @@ export default class PosPurchase extends Vue {
         const totalTax = tax1 + tax2 + tax3;
 
         const avgTax = 100 + totalTax;
-        const tax = (mrp / avgTax) * totalTax;
-        const packPrice = mrp - tax;
+        const tax = (packPrice / avgTax) * totalTax;
+        //const packPrice = mrp - tax;
+        const mrp = packPrice + tax;
+
+        console.log("------------------");
+        console.log("tax", tax);
+        console.log("packPrice", packPrice);
+        console.log("mrp", mrp);
 
         const total = qty * price;
         const disAmount = (total / 100) * discount;
@@ -938,7 +944,9 @@ export default class PosPurchase extends Vue {
             data.packSize * data.unit + data.freeUnit + data.supplierBonus;
 
         //PACK PRICE
-        data.sellingPrice = Number(packPrice);
+        //data.sellingPrice = Number(packPrice);
+
+        data.mrp = Number(mrp);
 
         //AFTER DISCOUNT PURCHASE PRICE
         data.purchaseAfterDisc = Number(this.fixDigits(price - disAmount));
