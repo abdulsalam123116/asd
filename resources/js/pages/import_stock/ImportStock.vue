@@ -595,6 +595,12 @@ export default class ImportStock extends Vue {
         this.toast.showSuccess("Cleared Successfully");
     }
 
+    getRandomNumberWithLeadingZeros(min, max) {
+        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+        // Use String.prototype.padStart() to add leading zeros if needed
+        return randomNumber.toString().padStart(2, "0");
+    }
+
     addNewRow() {
         this.setDefaultValues();
 
@@ -605,10 +611,15 @@ export default class ImportStock extends Vue {
         const nextYearDate = new Date(currentDate);
         nextYearDate.setFullYear(currentDate.getFullYear() + 1);
 
+        var now = moment().format("MMDDHHmmss");
+        var randomNumber = this.getRandomNumberWithLeadingZeros(0, 99);
+
+        var barcode = "5" + now + randomNumber;
+
         this.excelFileContent.push({
             productName: "",
             genericName: "",
-            barcode: "",
+            barcode: barcode,
             productType: 5,
             brandName: this.defaultBrandid,
             brandSector: this.defaultBrandSectorid,
@@ -633,10 +644,13 @@ export default class ImportStock extends Vue {
     }
 
     changeGenericNameAndBatchNo(item) {
-        console.log('item.genericName',item.genericName);
-        console.log('item.productName',item.productName.slice(0, -1));
+        console.log("item.genericName", item.genericName);
+        console.log("item.productName", item.productName.slice(0, -1));
 
-        if (item.genericName == "" || item.genericName == item.productName.slice(0, -1))
+        if (
+            item.genericName == "" ||
+            item.genericName == item.productName.slice(0, -1)
+        )
             item.genericName = item.productName;
         if (item.batchNo == "" || item.batchNo == item.productName.slice(0, -1))
             item.batchNo = item.productName;
