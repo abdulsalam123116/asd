@@ -444,11 +444,12 @@ class PosController extends Controller
 
                 $t = new  PosReceipt();
 
-                // $receiptNo = "XXXXXXX";
-                // if ($type == 'EPUR')
-                //     $receiptNo = "XXXX";
-                // else
-                $receiptNo =  $t->generateID($type);
+
+                if ($pos_receipt_id != null) {
+                    $receiptNo = $request->search_receipt_no;
+                } else {
+                    $receiptNo =  $t->generateID($type);
+                }
 
 
 
