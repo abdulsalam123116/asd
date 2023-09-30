@@ -805,8 +805,18 @@ export default class PosPurchase extends Vue {
     }
     loadPurchaseItems() {}
 
+    getRandomNumberWithLeadingZeros(min, max) {
+        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+        // Use String.prototype.padStart() to add leading zeros if needed
+        return randomNumber.toString().padStart(2, "0");
+    }
+
     saveItem(event) {
         const itemInfo = event.value;
+
+        var now = moment().format("MMDDHHmmss");
+        var randomNumber = this.getRandomNumberWithLeadingZeros(0, 99);
+        var barcode = "5" + now + randomNumber;
 
         this.savedItemList.push({
             id: null,
@@ -822,6 +832,7 @@ export default class PosPurchase extends Vue {
             freeUnit: 0,
             supplierBonus: 0,
             batchNo: itemInfo.batch_no,
+            barcode: barcode,
             packSize: Number(itemInfo.pack_size),
             sheetSize: Number(itemInfo.strip_size),
             purchasePrice: Number(itemInfo.purchase_price),
@@ -908,7 +919,6 @@ export default class PosPurchase extends Vue {
     }
 
     getTheSubtotal(data) {
-
         const qty = Number(data.unit);
         const price = Number(data.purchasePrice);
         const discount = Number(data.itemDisc);
@@ -1089,6 +1099,7 @@ export default class PosPurchase extends Vue {
         this.paymentDialog = false;
     }
 
+    // Save Purchase
     getProceededPayments(paymentList) {
         this.paymentList = paymentList;
         const tenderedList = this.getTotalPaid(paymentList);

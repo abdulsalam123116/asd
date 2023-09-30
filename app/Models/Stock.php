@@ -58,10 +58,10 @@ class Stock extends Model
         {
             $stock->qty = $stock->qty + $totalUnit;
         }
-       
+
         $stock->save();
     }
-    
+
     public function addReducePurchaseStock($item,$type)
     {
         $stock_id = 0;
@@ -95,7 +95,7 @@ class Stock extends Model
                 $stock = new Stock([
                     'product_name'        => $item->productName,
                     'generic'             => $item->generic,
-                    'barcode'             => $stocked->barcode,
+                    'barcode'             => $item->barcode,
                     'type'                => $stocked->type,
                     'description'         => ($stocked->itemDescription == "" ? 'None' : $stocked->itemDescription),
                     'image'               => $stocked->image,

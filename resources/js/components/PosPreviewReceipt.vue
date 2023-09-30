@@ -397,6 +397,7 @@ import PrinterCommandService from "../service/PrinterCommandService.js";
 
 interface itemList {
     batchNo: string;
+    barcode: string;
     brandName: string;
     categoryName: string;
     expiryDate: string;
@@ -571,6 +572,8 @@ export default class PosPreviewReceipt extends Vue {
 
     loadReceipt(receiptID) {
         this.posService.getReceiptData(receiptID).then((res) => {
+            // console.log('res of loadReceipt', res);
+
             if (res != null) {
                 if (res.tStoreDetails != null) {
                     this.transferStoreName =
@@ -608,6 +611,7 @@ export default class PosPreviewReceipt extends Vue {
                 this.items.totalTendered = Number(res.receipt.total_tendered);
 
                 let vList = res.receiptList;
+                console.log("vList", vList);
 
                 if (vList.length > 0) {
                     this.itemList = [];
@@ -615,6 +619,7 @@ export default class PosPreviewReceipt extends Vue {
                     vList.map((v) => {
                         this.itemList.push({
                             batchNo: v.batch_no,
+                            barcode: v.barcode,
                             brandName: v.brand_name,
                             categoryName: v.category_name,
                             expiryDate: v.expiry_date,
@@ -737,6 +742,7 @@ export default class PosPreviewReceipt extends Vue {
                 product_name: inputJson.itemName,
                 branch_name: "Nour Alhayat",
                 batch_no: inputJson.batchNo,
+                barcode: inputJson.barcode,
                 expiry_date: inputJson.expiryDate,
                 sale_price: inputJson.mrp,
             };

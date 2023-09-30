@@ -105,6 +105,7 @@
                         <InputText
                             v-model="slotProps.data.barcode"
                             class="p-p-1"
+                            :disabled="true"
                         />
                     </template>
                 </Column>
