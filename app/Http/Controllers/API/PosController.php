@@ -404,7 +404,6 @@ class PosController extends Controller
         if ($type == 'EPUR')
             $type = 'PUR';
 
-
         try {
             $itemLists = json_decode($request->item_list);
             $counterEntry = json_decode($request->counter_entry);
@@ -444,6 +443,11 @@ class PosController extends Controller
 
 
                 $t = new  PosReceipt();
+
+                // $receiptNo = "XXXXXXX";
+                // if ($type == 'EPUR')
+                //     $receiptNo = "XXXX";
+                // else
                 $receiptNo =  $t->generateID($type);
 
 
@@ -487,21 +491,21 @@ class PosController extends Controller
                     $s = new Stock();
                     $stock_id = $s->addReducePurchaseStock($item, $type);
 
-
                     $PosSubReceipt = PosSubReceipt::updateOrCreate(
                         ['id' => $item->id], // Check if subtransaction  exists
                         [
-                            'pos_receipt_id'    => $receiptItem->id,
+                            'pos_receipt_id'      => $receiptItem->id,
                             'mode'                => $item->mode,
                             'stock_id'            => $stock_id,
                             'item_name'           => $item->productName,
                             'generic_name'        => $item->generic,
-                            'item_description'  => $item->itemDescription,
+                            'item_description'    => $item->itemDescription,
                             'unit'                => $item->unit,
-                            'total_unit'        => $item->totalUnit,
+                            'total_unit'          => $item->totalUnit,
                             'free_unit'           => $item->freeUnit,
                             'supplier_bonus'       => $item->supplierBonus,
-                            'batch_no'           => $item->batchNo,
+                            'batch_no'             => $item->batchNo,
+                            // 'barcode'             => $item->barcode,
                             'pack_size'           => $item->packSize,
                             'sheet_size'           => $item->sheetSize,
                             'purchase_price'       => $item->purchasePrice,
@@ -1058,8 +1062,14 @@ class PosController extends Controller
             ->where('id', $request->id)
             ->get()->first();
 
-
+        ///////////////////////////
         $receiptList = PosReceipt::find($request->id)->itemList;
+
+        foreach ($receiptList as $value) {
+            $stock = Stock::find($value->stock_id);
+            $value["barcode"] = $stock->barcode;
+        }
+        // return $receiptList;
 
         $storeDetail = Branch::with([
             'taxName1:chart_accounts.id,chart_accounts.account_name as chartName',
