@@ -92,6 +92,26 @@
                         />
                     </template>
                 </Column>
+
+                <Column header="Strip Size">
+                    <template #body="slotProps">
+                        <InputNumber
+                            :useGrouping="false"
+                            v-model="slotProps.data.stripSize"
+                            class="p-p-1"
+                        />
+                    </template>
+                </Column>
+                <Column header="Pack Size">
+                    <template #body="slotProps">
+                        <InputNumber
+                            :useGrouping="false"
+                            v-model="slotProps.data.packSize"
+                            class="p-p-1"
+                        />
+                    </template>
+                </Column>
+
                 <Column header="Generic Name">
                     <template #body="slotProps">
                         <InputText
@@ -161,24 +181,7 @@
                         />
                     </template>
                 </Column>
-                <Column header="Strip Size">
-                    <template #body="slotProps">
-                        <InputNumber
-                            :useGrouping="false"
-                            v-model="slotProps.data.stripSize"
-                            class="p-p-1"
-                        />
-                    </template>
-                </Column>
-                <Column header="Pack Size">
-                    <template #body="slotProps">
-                        <InputNumber
-                            :useGrouping="false"
-                            v-model="slotProps.data.packSize"
-                            class="p-p-1"
-                        />
-                    </template>
-                </Column>
+
                 <Column header="Unit Quantity">
                     <template #body="slotProps">
                         <InputNumber
