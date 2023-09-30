@@ -231,6 +231,7 @@
                     <thead>
                         <tr class="pos-heading">
                             <th style="width: 8rem">Batch No</th>
+                            <th>Expiry Date</th>
                             <th>Unit Qty</th>
                             <th>Free Qty</th>
                             <th>Sup Bonus</th>
@@ -240,7 +241,6 @@
                             <th>Selling Price ({{ currency }})</th>
                             <th>MRP PRICE ({{ currency }})</th>
                             <th>Cus Disc %</th>
-                            <th>Expiry Date</th>
                             <th v-if="taxNames[0].show">
                                 {{ taxNames[0].taxName }} %
                             </th>
@@ -259,6 +259,53 @@
                             v-for="savedItem in savedItemList.slice().reverse()"
                             :key="savedItem"
                         >
+                            <tr
+                                class="item-detail-row"
+                                v-if="savedItem.productID != 0"
+                            >
+                                <td :colspan="countTaxesLen">
+                                    <span class="p-mr-1">
+                                        PRODUCT NAME:
+                                        <span
+                                            style="
+                                                color: #fff;
+                                                background-color: #c00;
+                                            "
+                                        >
+                                            {{
+                                                limitString(
+                                                    savedItem.productName
+                                                )
+                                            }}
+                                        </span></span
+                                    >
+                                    <span class="p-mr-1">
+                                        GENERIC:
+                                        <span
+                                            style="
+                                                color: #fff;
+                                                background-color: #c00;
+                                            "
+                                        >
+                                            {{ limitString(savedItem.generic) }}
+                                        </span></span
+                                    >
+                                    <span class="p-mx-1">
+                                        SHEET SIZE : {{ savedItem.sheetSize }}
+                                    </span>
+                                    <span class="p-mx-1">
+                                        PACKSIZE : {{ savedItem.packSize }}
+                                    </span>
+                                    <span class="p-mx-1">
+                                        TOTAL UNITS :
+                                        {{ fixDigits(savedItem.totalUnit) }}
+                                    </span>
+                                    <span class="p-mx-1">
+                                        PACK PRICE : {{ currency }}
+                                        {{ fixDigits(savedItem.sellingPrice) }}
+                                    </span>
+                                </td>
+                            </tr>
                             <tr class="table-row">
                                 <td>
                                     <div class="p-inputgroup">
@@ -266,6 +313,19 @@
                                             style="height: 30px"
                                             v-model="savedItem.batchNo"
                                             class="p-p-1"
+                                            @focusout="updateOnHoldItems"
+                                        />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="p-inputgroup">
+                                        <Calendar
+                                            id="expiryDate"
+                                            v-model="savedItem.expiryDate"
+                                            style="width: 2rem; height: 30px"
+                                            selectionMode="single"
+                                            dateFormat="dd-mm-yy"
+                                            class="p-p-0"
                                             @focusout="updateOnHoldItems"
                                         />
                                     </div>
@@ -383,19 +443,7 @@
                                         />
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="p-inputgroup">
-                                        <Calendar
-                                            id="expiryDate"
-                                            v-model="savedItem.expiryDate"
-                                            style="width: 2rem; height: 30px"
-                                            selectionMode="single"
-                                            dateFormat="dd-mm-yy"
-                                            class="p-p-0"
-                                            @focusout="updateOnHoldItems"
-                                        />
-                                    </div>
-                                </td>
+
                                 <td v-if="taxNames[0].show">
                                     <div class="p-inputgroup">
                                         <InputNumber
@@ -444,53 +492,6 @@
                                         class="p-button-danger p-p-1"
                                         @click="clearListItem(savedItem)"
                                     />
-                                </td>
-                            </tr>
-                            <tr
-                                class="item-detail-row"
-                                v-if="savedItem.productID != 0"
-                            >
-                                <td :colspan="countTaxesLen">
-                                    <span class="p-mr-1">
-                                        PRODUCT NAME:
-                                        <span
-                                            style="
-                                                color: #fff;
-                                                background-color: #c00;
-                                            "
-                                        >
-                                            {{
-                                                limitString(
-                                                    savedItem.productName
-                                                )
-                                            }}
-                                        </span></span
-                                    >
-                                    <span class="p-mr-1">
-                                        GENERIC:
-                                        <span
-                                            style="
-                                                color: #fff;
-                                                background-color: #c00;
-                                            "
-                                        >
-                                            {{ limitString(savedItem.generic) }}
-                                        </span></span
-                                    >
-                                    <span class="p-mx-1">
-                                        SHEET SIZE : {{ savedItem.sheetSize }}
-                                    </span>
-                                    <span class="p-mx-1">
-                                        PACKSIZE : {{ savedItem.packSize }}
-                                    </span>
-                                    <span class="p-mx-1">
-                                        TOTAL UNITS :
-                                        {{ fixDigits(savedItem.totalUnit) }}
-                                    </span>
-                                    <span class="p-mx-1">
-                                        PACK PRICE : {{ currency }}
-                                        {{ fixDigits(savedItem.sellingPrice) }}
-                                    </span>
                                 </td>
                             </tr>
                         </template>
