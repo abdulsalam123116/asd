@@ -505,6 +505,7 @@
                             <InputText
                                 placeholder="Receipt Description"
                                 v-model="item.description"
+                                @focusout="updateOnHoldItems"
                             />
                         </div>
                     </div>
@@ -513,6 +514,7 @@
                             <InputText
                                 placeholder="Bill No"
                                 v-model="item.billNo"
+                                @focusout="updateOnHoldItems"
                             />
                         </div>
                     </div>
@@ -766,11 +768,31 @@ export default class PosPurchase extends Vue {
         this.posService = new PosService();
         this.toast = new Toaster();
 
+        // On Hold
+        /// 1-  ItemList
         var savedItemListLocalStorage = JSON.parse(
             localStorage.getItem("purchase_savedItemList") || "[]"
         );
         if (savedItemListLocalStorage.length > 0) this.onHoldStatus = true;
         this.savedItemList = savedItemListLocalStorage ?? [];
+
+        /// 2 - Profilers
+        this.profilerList =
+            JSON.parse(localStorage.getItem("purchase_profilerList") || "[]") ??
+            [];
+
+        /// 3 - Item
+        this.item =
+            JSON.parse(localStorage.getItem("purchase_item") || "[]") ??
+            this.item;
+
+        if (this.item.profileID) {
+            var selectedProfile = this.profilerList.find(
+                (e) => e["id"] === this.item.profileID
+            );
+            if (selectedProfile)
+                this.state.selectedProfile = selectedProfile["account_title"];
+        }
     }
 
     mounted() {
@@ -803,6 +825,8 @@ export default class PosPurchase extends Vue {
         const profileInfo = event.value;
         this.state.selectedProfile = profileInfo.account_title;
         this.item.profileID = profileInfo.id;
+
+        this.updateOnHoldItems();
     }
     loadPurchaseItems() {}
 
@@ -867,6 +891,15 @@ export default class PosPurchase extends Vue {
             "purchase_savedItemList",
             JSON.stringify(this.savedItemList)
         );
+
+        localStorage.setItem("purchase_item", JSON.stringify(this.item));
+        console.log("this.item", this.item);
+
+        localStorage.setItem(
+            "purchase_profilerList",
+            JSON.stringify(this.profilerList)
+        );
+        console.log("purchase_profilerList", this.profilerList);
     }
 
     loadList() {
@@ -1048,6 +1081,8 @@ export default class PosPurchase extends Vue {
 
     clearAll() {
         localStorage.removeItem("purchase_savedItemList");
+        localStorage.removeItem("purchase_profilerList");
+        localStorage.removeItem("purchase_item");
         this.onHoldStatus = false;
 
         this.savedItemList = [];
