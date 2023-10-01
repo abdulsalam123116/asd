@@ -969,9 +969,9 @@ export default class PosPurchase extends Vue {
         const tax2 = data.tax2;
         const tax3 = data.tax3;
         const totalTax = tax1 + tax2 + tax3;
-        console.log(tax1, tax2, tax3);
+        console.log("tax1:", tax1, "tax2:", tax2, "tax3:", tax3);
 
-        console.log("totalTax", totalTax);
+        // console.log("totalTax", totalTax);
 
         const avgTax = 100 + totalTax;
         //const tax = (packPrice / avgTax) * totalTax; // old - not correct
@@ -980,11 +980,11 @@ export default class PosPurchase extends Vue {
         //const mrp = packPrice + tax;
         const mrp = packPrice + tax;
 
-        console.log("------------------");
-        console.log("data", data);
-        console.log("tax", tax);
-        console.log("packPrice", packPrice);
-        console.log("mrp", mrp);
+        // console.log("------------------");
+        // console.log("data", data);
+        // console.log("tax", tax);
+        // console.log("packPrice", packPrice);
+        // console.log("mrp", mrp);
 
         const total = qty * price;
         const disAmount = (total / 100) * discount;
