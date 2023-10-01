@@ -969,10 +969,13 @@ export default class PosPurchase extends Vue {
         const tax2 = data.tax2;
         const tax3 = data.tax3;
         const totalTax = tax1 + tax2 + tax3;
+        console.log(tax1, tax2, tax3);
+
         console.log("totalTax", totalTax);
 
         const avgTax = 100 + totalTax;
-        const tax = (packPrice / avgTax) * totalTax;
+        //const tax = (packPrice / avgTax) * totalTax; // old - not correct
+        const tax = (packPrice * totalTax) / 100;
         //const packPrice = mrp - tax;
         //const mrp = packPrice + tax;
         const mrp = packPrice + tax;
