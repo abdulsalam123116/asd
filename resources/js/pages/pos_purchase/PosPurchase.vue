@@ -773,25 +773,31 @@ export default class PosPurchase extends Vue {
         var savedItemListLocalStorage = JSON.parse(
             localStorage.getItem("purchase_savedItemList") || "[]"
         );
-        if (savedItemListLocalStorage.length > 0) this.onHoldStatus = true;
-        this.savedItemList = savedItemListLocalStorage ?? [];
+        if (savedItemListLocalStorage.length > 0 && this.item.type == "PUR")
+            this.onHoldStatus = true;
 
-        /// 2 - Profilers
-        this.profilerList =
-            JSON.parse(localStorage.getItem("purchase_profilerList") || "[]") ??
-            [];
+        if (this.onHoldStatus == true) {
+            this.savedItemList = savedItemListLocalStorage ?? [];
 
-        /// 3 - Item
-        this.item =
-            JSON.parse(localStorage.getItem("purchase_item") || "[]") ??
-            this.item;
+            /// 2 - Profilers
+            this.profilerList =
+                JSON.parse(
+                    localStorage.getItem("purchase_profilerList") || "[]"
+                ) ?? [];
 
-        if (this.item.profileID) {
-            var selectedProfile = this.profilerList.find(
-                (e) => e["id"] === this.item.profileID
-            );
-            if (selectedProfile)
-                this.state.selectedProfile = selectedProfile["account_title"];
+            /// 3 - Item
+            this.item =
+                JSON.parse(localStorage.getItem("purchase_item") || "[]") ??
+                this.item;
+
+            if (this.item.profileID) {
+                var selectedProfile = this.profilerList.find(
+                    (e) => e["id"] === this.item.profileID
+                );
+                if (selectedProfile)
+                    this.state.selectedProfile =
+                        selectedProfile["account_title"];
+            }
         }
     }
 
