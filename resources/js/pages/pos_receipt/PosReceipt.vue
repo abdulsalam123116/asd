@@ -975,9 +975,23 @@ export default class PosReceipt extends Vue {
     }
 
     searchItem(event) {
+        console.log("searchItem event", event);
+
         setTimeout(() => {
             this.posService.searchItem(event.query.trim()).then((data) => {
                 this.itemList = data.records;
+                console.log("this.itemList", this.itemList);
+
+                /// Check if there is exactly one item in the list
+                if (this.itemList.length === 1) {
+                    const item = this.itemList[0];
+
+                    if (item["barcode"] == event.query) {
+                        event.value = item;
+                        this.saveItem(event);
+                        this.itemList = [];
+                    }
+                }
             });
         }, 200);
     }
@@ -989,6 +1003,8 @@ export default class PosReceipt extends Vue {
     }
 
     saveItem(event) {
+        console.log("event", event);
+
         const itemInfo = event.value;
 
         let sellRate = 0;
@@ -1425,7 +1441,7 @@ export default class PosReceipt extends Vue {
             "savedItemList .. savedItemList... savedItemList",
             this.savedItemList
         );
-console.log('this.netTotal - totalGross', this.totalGross);
+        console.log("this.netTotal - totalGross", this.totalGross);
 
         const total = this.netTotal - (this.netTotal * this.discount) / 100; // after discount
         var totalPaid = 0;
@@ -1588,8 +1604,10 @@ console.log('this.netTotal - totalGross', this.totalGross);
                                 <tr>
                                     <td>${item.productName}</td>
                                     <td>${item.unit}</td>
-                                    <td>${item.mrp } ${this.currency}</td>
-                                    <td>${item.mrp * item.unit} ${this.currency}</td>
+                                    <td>${item.mrp} ${this.currency}</td>
+                                    <td>${item.mrp * item.unit} ${
+                                            this.currency
+                                        }</td>
                                 </tr>
                                 `
                                     )
@@ -1599,24 +1617,24 @@ console.log('this.netTotal - totalGross', this.totalGross);
                         </table>
 
                         <div class="total">
-                            <h4>Net Total: ${this.fixDigits(this.totalGross)} </h4>
+                            <h4>Net Total: ${this.fixDigits(
+                                this.totalGross
+                            )} </h4>
                             <p>Discount: ${this.discount}%</p>
-                                <p>VAT: ${this.fixLength(total - this.totalGross)} ${
-            this.currency
-        }</p>
+                                <p>VAT: ${this.fixLength(
+                                    total - this.totalGross
+                                )} ${this.currency}</p>
                             <h3>Total: ${this.fixLength(total)} ${
             this.currency
         }</h3>
         ${this.paymentList
-                                .map(
-                                    (item) =>
-                                        `  <p>${item.paymentType} : ${
-                                            item.transTotalAmount +
-                                            " " +
-                                            this.currency
-                                        }</p>`
-                                )
-                                .join("")}
+            .map(
+                (item) =>
+                    `  <p>${item.paymentType} : ${
+                        item.transTotalAmount + " " + this.currency
+                    }</p>`
+            )
+            .join("")}
                             <p>Balance Due: ${this.fixLength(balanceDue)} ${
             this.currency
         }</p>
