@@ -891,21 +891,23 @@ export default class PosPurchase extends Vue {
     }
 
     updateOnHoldItems() {
-        console.log("updateOnHoldItems calle ..");
+        if (this.item.type == "PUR") {
+            console.log("updateOnHoldItems calle ..");
 
-        localStorage.setItem(
-            "purchase_savedItemList",
-            JSON.stringify(this.savedItemList)
-        );
+            localStorage.setItem(
+                "purchase_savedItemList",
+                JSON.stringify(this.savedItemList)
+            );
 
-        localStorage.setItem("purchase_item", JSON.stringify(this.item));
-        console.log("this.item", this.item);
+            localStorage.setItem("purchase_item", JSON.stringify(this.item));
+            console.log("this.item", this.item);
 
-        localStorage.setItem(
-            "purchase_profilerList",
-            JSON.stringify(this.profilerList)
-        );
-        console.log("purchase_profilerList", this.profilerList);
+            localStorage.setItem(
+                "purchase_profilerList",
+                JSON.stringify(this.profilerList)
+            );
+            console.log("purchase_profilerList", this.profilerList);
+        }
     }
 
     loadList() {
