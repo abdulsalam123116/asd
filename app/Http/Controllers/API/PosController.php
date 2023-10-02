@@ -490,6 +490,14 @@ class PosController extends Controller
                 foreach ($itemLists as $item) {
                     //MANAGING STOCKS
                     $s = new Stock();
+                    if (!property_exists($item, 'barcode') || $item->barcode === null) {
+                        $now = date("mdHi");
+                        $randomNumber = str_pad(mt_rand(000, 999), 3, '0', STR_PAD_LEFT);
+                        $barcode = "6" . $now . $randomNumber;
+
+                        $item->barcode = $barcode;
+                    }
+
                     $stock_id = $s->addReducePurchaseStock($item, $type);
 
                     $PosSubReceipt = PosSubReceipt::updateOrCreate(
