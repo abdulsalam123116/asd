@@ -487,6 +487,27 @@ class PosController extends Controller
                 //IF USED CARDS
                 $t->passBankTransaction($transaction->id, $receiptNo, $narration, $paymentLists, $request->profile_id);
 
+                // TODO: Delete Items Not Send With Request in case Edit Purchase
+                if ($request->type == "EPUR") {
+                    $old_subReceipt = PosSubReceipt::where('pos_receipt_id', $receiptItem->id)->get();
+
+                    // Extract 'id' property from each object
+                    $current_ids = array_map(function ($item) {
+                        return $item->id;
+                    }, $itemLists);
+
+                    foreach ($old_subReceipt as $old_item) {
+
+                        if (in_array($old_item->id, $current_ids)) {
+                            //echo "id:" . $old_item->id . " ,Item found in ids \n" ;
+                        } else {
+                            //echo "id:" . $old_item->id . " ,Item not found in ids \n";
+                            $deleteItem = PosSubReceipt::find($old_item->id);
+                            $deleteItem->delete();
+                        }
+                     }
+                }
+
                 foreach ($itemLists as $item) {
                     //MANAGING STOCKS
                     $s = new Stock();
