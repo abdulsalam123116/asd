@@ -651,6 +651,7 @@ import {
     PaymentListType,
 } from "../pos_purchase/IPurchaseReceipt";
 import router from "../../router";
+import Swal from "sweetalert2";
 
 @Options({
     props: {
@@ -1362,8 +1363,20 @@ export default class PosPurchase extends Vue {
         }
     }
 
-    redirectHome() {
-        router.replace({ path: "/store/dashboard", params: {} });
+    async redirectHome() {
+        const result = await Swal.fire({
+            title: "Confirm",
+            text: "Are you sure you want to switch to the Home?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, switch to Home",
+        });
+
+        if (result.isConfirmed) {
+            router.replace({ path: "/store/dashboard", params: {} });
+        }
     }
 
     get countTaxesLen() {
